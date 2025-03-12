@@ -63,11 +63,12 @@ const handleLogin = async () => {
 
 <style scoped>
 .login-container {
+  flex: 1;
   height: 100vh;
   display: flex;
-  align-items: center;
   justify-content: center;
-  background-color: var(--color-background);
+  align-items: center;
+  padding: 2rem;
 }
 
 .login-box {

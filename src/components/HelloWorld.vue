@@ -14,17 +14,21 @@ defineProps<{
 <style scoped>
 h1 {
   font-weight: 500;
-  font-size: 3.5rem;
-  position: relative;
-  margin-bottom: 1rem;
+  font-size: 2.5rem;
+  margin-bottom: 0.5rem;
   color: var(--color-heading);
+  line-height: 1.2;
 }
 
 h3 {
-  font-size: 1.5rem;
+  font-size: 1.2rem;
   color: var(--color-text);
   max-width: 600px;
   line-height: 1.4;
+}
+
+.greetings {
+  padding-left: 1rem;
 }
 
 .greetings h1,
