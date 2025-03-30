@@ -24,11 +24,11 @@ const handleLogin = async () => {
 </script>
 
 <template>
-  <div class="login-container">
-    <div class="login-box">
+  <div class="auth-container">
+    <div class="auth-box">
       <h1>Iniciar Sesión</h1>
 
-      <form @submit.prevent="handleLogin" class="login-form">
+      <form @submit.prevent="handleLogin" class="auth-form">
         <div class="form-group">
           <label for="email">Correo Electrónico</label>
           <input
@@ -55,14 +55,18 @@ const handleLogin = async () => {
           {{ error }}
         </div>
 
-        <button type="submit" class="login-button">Iniciar Sesión</button>
+        <button type="submit" class="auth-button">Iniciar Sesión</button>
+
+        <div class="auth-link">
+          ¿No tienes una cuenta? <RouterLink to="/register">Regístrate aquí</RouterLink>
+        </div>
       </form>
     </div>
   </div>
 </template>
 
 <style scoped>
-.login-container {
+.auth-container {
   flex: 1;
   height: 100vh;
   display: flex;
@@ -71,7 +75,7 @@ const handleLogin = async () => {
   padding: 2rem;
 }
 
-.login-box {
+.auth-box {
   background-color: var(--color-background-soft);
   padding: 2rem;
   border-radius: 8px;
@@ -80,13 +84,13 @@ const handleLogin = async () => {
   max-width: 400px;
 }
 
-.login-box h1 {
+.auth-box h1 {
   text-align: center;
   color: var(--color-heading);
   margin-bottom: 2rem;
 }
 
-.login-form {
+.auth-form {
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
@@ -111,7 +115,7 @@ const handleLogin = async () => {
   color: var(--color-text);
 }
 
-.login-button {
+.auth-button {
   background-color: #4a90e2;
   color: white;
   padding: 0.75rem;
@@ -122,7 +126,7 @@ const handleLogin = async () => {
   transition: background-color 0.3s;
 }
 
-.login-button:hover {
+.auth-button:hover {
   background-color: #357abd;
 }
 
@@ -130,5 +134,19 @@ const handleLogin = async () => {
   color: #dc3545;
   font-size: 0.9rem;
   text-align: center;
+}
+
+.auth-link {
+  text-align: center;
+  margin-top: 1rem;
+}
+
+.auth-link a {
+  color: #4a90e2;
+  text-decoration: none;
+}
+
+.auth-link a:hover {
+  text-decoration: underline;
 }
 </style>

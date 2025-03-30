@@ -10,7 +10,7 @@ import { computed } from 'vue'
 library.add(faCloudSunRain)
 
 const route = useRoute()
-const showHeader = computed(() => route.path !== '/login')
+const showHeader = computed(() => route.path !== '/login' && route.path !== '/register')
 </script>
 
 <template>
