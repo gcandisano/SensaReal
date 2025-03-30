@@ -155,8 +155,8 @@ onMounted(() => {
 
 <style scoped>
 .dashboard {
+  height: calc(100vh - 80px);
   padding: 20px;
-  height: calc(100vh - 40px);
 }
 
 .dashboard-content {

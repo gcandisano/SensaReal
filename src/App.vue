@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { RouterLink, RouterView, useRoute } from 'vue-router'
+import { RouterView, useRoute } from 'vue-router'
+import TheHeader from './components/TheHeader.vue'
 import HelloWorld from './components/HelloWorld.vue'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { library } from '@fortawesome/fontawesome-svg-core'
@@ -9,44 +10,67 @@ import { computed } from 'vue'
 library.add(faCloudSunRain)
 
 const route = useRoute()
-const showHeader = computed(() => route.path == '/login')
+const showHeader = computed(() => route.path !== '/login')
 </script>
 
 <template>
   <div class="app-container">
-    <header v-if="showHeader">
-      <font-awesome-icon :icon="['fad', 'cloud-sun-rain']" size="10x" class="weather-icon" />
-      <div class="wrapper">
-        <HelloWorld msg="Bienvenido a Sensareal!" />
-      </div>
-    </header>
+    <TheHeader v-if="showHeader" />
 
-    <RouterView />
+    <div v-if="!showHeader" class="login-page">
+      <div class="left-section">
+        <div class="welcome-content">
+          <font-awesome-icon :icon="faCloudSunRain" size="8x" class="weather-icon" />
+          <HelloWorld msg="Bienvenido a Sensareal!" />
+        </div>
+      </div>
+      <div class="right-section">
+        <RouterView />
+      </div>
+    </div>
+
+    <main v-else :class="{ 'with-header': showHeader }">
+      <RouterView />
+    </main>
   </div>
 </template>
 
-<style scoped>
+<style>
 .app-container {
-  display: flex;
-  width: 100%;
-  height: 100vh;
+  min-height: 100vh;
 }
 
-header {
+.with-header {
+  padding-top: 60px;
+}
+
+.login-page {
+  display: flex;
+  min-height: 100vh;
+}
+
+.left-section {
   flex: 1;
   display: flex;
   align-items: center;
-  padding: 2rem;
+  justify-content: center;
+  padding-left: 100px;
+}
+
+.right-section {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.welcome-content {
+  display: flex;
+  align-items: center;
   gap: 2rem;
-  margin-left: 100px;
 }
 
 .weather-icon {
   color: #4a90e2;
-  font-size: 8rem;
-}
-
-.wrapper {
-  flex: 1;
 }
 </style>
