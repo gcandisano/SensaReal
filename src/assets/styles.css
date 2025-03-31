@@ -248,3 +248,12 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* Estilos para la página About */
+@media (min-width: 1024px) {
+  .about {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+  }
+}
