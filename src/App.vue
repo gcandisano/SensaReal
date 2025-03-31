@@ -4,10 +4,10 @@ import TheHeader from './components/TheHeader.vue'
 import HelloWorld from './components/HelloWorld.vue'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { library } from '@fortawesome/fontawesome-svg-core'
-import { faCloudSunRain } from '@fortawesome/free-solid-svg-icons'
+import { faCloudSunRain, faUser, faSignOutAlt, faCog } from '@fortawesome/free-solid-svg-icons'
 import { computed } from 'vue'
 
-library.add(faCloudSunRain)
+library.add(faCloudSunRain, faUser, faSignOutAlt, faCog)
 
 const route = useRoute()
 const showHeader = computed(() => route.path !== '/login' && route.path !== '/register')
