@@ -1,24 +1,38 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
+import { useAuthStore } from '@/stores/auth'
+import { authService } from '@/services/api/auth'
 
 const router = useRouter()
+const authStore = useAuthStore()
 const email = ref('')
 const password = ref('')
 const error = ref('')
+const isLoading = ref(false)
 
 const handleLogin = async () => {
   try {
-    // Aquí irá la lógica de autenticación
-    // Por ahora solo simularemos el login
-    if (email.value && password.value) {
-      // Redirigir al dashboard después del login exitoso
-      router.push('/')
-    } else {
+    if (!email.value || !password.value) {
       error.value = 'Por favor complete todos los campos'
+      return
     }
-  } catch (e) {
-    error.value = 'Error al iniciar sesión'
+
+    isLoading.value = true
+    const response = await authService.login({
+      email: email.value,
+      password: password.value
+    })
+
+    // Guardar el token y la información del usuario en el store
+    authStore.setAuth(response)
+    
+    // Redirigir al dashboard después del login exitoso
+    router.push('/')
+  } catch (e: any) {
+    error.value = e.response?.data?.message || 'Error al iniciar sesión'
+  } finally {
+    isLoading.value = false
   }
 }
 </script>
@@ -55,7 +69,9 @@ const handleLogin = async () => {
           {{ error }}
         </div>
 
-        <button type="submit" class="auth-button">Iniciar Sesión</button>
+        <button type="submit" class="auth-button" :disabled="isLoading">
+          {{ isLoading ? 'Iniciando sesión...' : 'Iniciar Sesión' }}
+        </button>
 
         <div class="auth-link">
           ¿No tienes una cuenta? <RouterLink to="/register">Regístrate aquí</RouterLink>
