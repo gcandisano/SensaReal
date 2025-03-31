@@ -40,8 +40,31 @@ const chartOptions = {
   scales: {
     y: {
       beginAtZero: true,
+      ticks: {
+        font: {
+          size: 10
+        }
+      }
     },
+    x: {
+      ticks: {
+        font: {
+          size: 10
+        },
+        maxRotation: 0
+      }
+    }
   },
+  plugins: {
+    legend: {
+      labels: {
+        boxWidth: 15,
+        font: {
+          size: 11
+        }
+      }
+    }
+  }
 }
 
 // Propiedades computadas para los estados
@@ -216,8 +239,10 @@ onUnmounted(() => {
         </div>
 
         <div class="grafico-container">
-          <h2>Historial de Mediciones</h2>
-          <p class="grafico-descripcion">Últimas 10 mediciones registradas</p>
+          <div class="grafico-header">
+            <h2>Historial de Mediciones</h2>
+            <p class="grafico-descripcion">Últimas 10 mediciones</p>
+          </div>
           <div class="grafico">
             <Line :data="chartData" :options="chartOptions" />
           </div>
@@ -230,7 +255,8 @@ onUnmounted(() => {
 <style scoped>
 .dashboard {
   height: calc(100vh - 80px);
-  padding: 20px;
+  padding: 15px;
+  overflow: hidden;
 }
 
 .dashboard-content {
@@ -255,14 +281,14 @@ onUnmounted(() => {
 }
 
 .dashboard-header {
-  margin-bottom: 30px;
-  padding: 15px;
+  margin-bottom: 15px;
+  padding: 10px;
   background: #1a1a1a;
   border-radius: 10px;
 }
 
 .dashboard-header h1 {
-  font-size: 2rem;
+  font-size: 1.6rem;
   color: var(--color-heading);
   margin: 0;
 }
@@ -290,13 +316,13 @@ onUnmounted(() => {
 .info-cards {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 10px;
 }
 
 .info-card {
   background: var(--color-background-soft);
   border-radius: 12px;
-  padding: 20px;
+  padding: 10px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   padding: 15px;
   background: #1a1a1a;
@@ -311,6 +337,20 @@ onUnmounted(() => {
 
 .card-content {
   color: var(--color-text);
+}
+
+.card-content.compact {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.ml-auto {
+  margin-left: auto;
+}
+
+.compact-text {
+  font-size: 0.9rem;
+  margin: 0;
 }
 
 .status-item,
@@ -339,8 +379,8 @@ onUnmounted(() => {
 .metrics-section {
   display: flex;
   flex-direction: column;
-  gap: 20px;
-  padding: 20px;
+  gap: 15px;
+  padding: 15px;
   background: var(--color-background-soft);
   border-radius: 15px;
 }
@@ -348,11 +388,11 @@ onUnmounted(() => {
 .mediciones-actuales {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 20px;
+  gap: 15px;
 }
 
 .medicion {
-  padding: 20px;
+  padding: 15px;
   border-radius: 12px;
   background: var(--color-background);
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -363,13 +403,13 @@ onUnmounted(() => {
   background: var(--color-background);
   padding: 20px;
   border-radius: 12px;
-  min-height: 400px;
+  min-height: 300px;
 }
 
 .valor {
-  font-size: 3rem;
+  font-size: 2.5rem;
   font-weight: bold;
-  margin-top: 10px;
+  margin-top: 5px;
 }
 
 .temperatura .valor {
@@ -427,7 +467,7 @@ onUnmounted(() => {
 }
 
 .grafico {
-  height: 400px;
+  height: 300px;
   margin-top: 20px;
 }
 
@@ -442,5 +482,45 @@ onUnmounted(() => {
 .info-card.dark:hover {
   transform: translateY(-2px);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.grafico-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.grafico-descripcion {
+  font-size: 0.8rem;
+  opacity: 0.8;
+  margin: 0;
+}
+
+@media (max-height: 800px) {
+  .dashboard-content {
+    gap: 15px;
+  }
+  
+  .info-card h3 {
+    font-size: 1rem;
+    margin-bottom: 10px;
+  }
+  
+  .grafico {
+    height: 250px;
+  }
+  
+  .grafico-container {
+    min-height: 250px;
+  }
+  
+  .valor {
+    font-size: 2rem;
+  }
+  
+  h2 {
+    font-size: 1.2rem;
+  }
 }
 </style>
