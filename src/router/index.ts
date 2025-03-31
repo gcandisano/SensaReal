@@ -32,7 +32,7 @@ const router = createRouter({
     {
       path: '/register-sensor',
       name: 'register-sensor',
-      component: () => import('../views/RegisterSensorView.vue')
+      component: () => import('../views/RegisterSensorView.vue'),
     },
   ],
 })

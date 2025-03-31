@@ -1,3 +1,17 @@
+# Dependencias
+node_modules
+.pnpm-store/
+
+# Archivos de compilación
+dist
+dist-ssr
+*.local
+.output
+.nuxt
+.nitro
+.cache
+.env
+
 # Logs
 logs
 *.log
@@ -16,15 +30,63 @@ coverage
 
 /cypress/videos/
 /cypress/screenshots/
+.nyc_output
 
-# Editor directories and files
+# Editor directories y archivos
 .vscode/*
 !.vscode/extensions.json
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
 .idea
 *.suo
 *.ntvs*
 *.njsproj
 *.sln
 *.sw?
+.DS_Store
+.project
+.classpath
+*.launch
+.settings/
+*.sublime-workspace
+*.sublime-project
 
+# TypeScript
 *.tsbuildinfo
+.tscache/
+
+# Archivos temporales
+.temp
+.tmp
+.cache
+.eslintcache
+.stylelintcache
+
+# Archivos de sistema
+Thumbs.db
+.DS_Store
+*.pem
+
+# Archivos de entorno
+.env
+.env.*
+!.env.example
+
+# Archivos de bloqueo de versiones
+# Incluir package-lock.json si usas npm
+# yarn.lock
+# pnpm-lock.yaml
+
+# Archivos de construcción
+.build/
+build/
+out/
+
+# Archivos de respaldo
+*.bak
+*.backup
+*~
+
+# Archivos de análisis y reportes
+report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
