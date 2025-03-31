@@ -29,6 +29,11 @@ const router = createRouter({
       name: 'register',
       component: RegisterView,
     },
+    {
+      path: '/register-sensor',
+      name: 'register-sensor',
+      component: () => import('../views/RegisterSensorView.vue')
+    },
   ],
 })
 
