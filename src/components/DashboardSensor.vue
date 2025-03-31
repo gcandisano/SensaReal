@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, onUnmounted, computed } from 'vue'
 import { Line } from 'vue-chartjs'
 import {
   Chart as ChartJS,
@@ -44,25 +44,99 @@ const chartOptions = {
   },
 }
 
+// Propiedades computadas para los estados
+const getTemperaturaEstado = computed(() => {
+  if (temperatura.value >= 18 && temperatura.value <= 28) {
+    return 'optimo'
+  } else if (temperatura.value < 15 || temperatura.value > 30) {
+    return 'peligro'
+  } else {
+    return 'alerta'
+  }
+})
+
+const getTemperaturaMessage = computed(() => {
+  if (temperatura.value >= 18 && temperatura.value <= 28) {
+    return 'Temperatura óptima'
+  } else if (temperatura.value < 15) {
+    return 'Temperatura demasiado baja'
+  } else if (temperatura.value > 30) {
+    return 'Temperatura demasiado alta'
+  } else {
+    return 'Temperatura en rango de alerta'
+  }
+})
+
+const getHumedadEstado = computed(() => {
+  if (humedad.value >= 30 && humedad.value <= 70) {
+    return 'optimo'
+  } else if (humedad.value < 20 || humedad.value > 80) {
+    return 'peligro'
+  } else {
+    return 'alerta'
+  }
+})
+
+const getHumedadMessage = computed(() => {
+  if (humedad.value >= 30 && humedad.value <= 70) {
+    return 'Humedad óptima'
+  } else if (humedad.value < 20) {
+    return 'Humedad demasiado baja'
+  } else if (humedad.value > 80) {
+    return 'Humedad demasiado alta'
+  } else {
+    return 'Humedad en rango de alerta'
+  }
+})
+
+// Variable para almacenar la referencia al intervalo
+let intervalo: number | null = null
+
 // Simular datos en tiempo real (reemplazar con tu API real)
 onMounted(() => {
   // Aquí deberías hacer la conexión con tu backend real
-  setInterval(() => {
+  intervalo = window.setInterval(() => {
     temperatura.value = Math.random() * 30 + 10
     humedad.value = Math.random() * 50 + 30
 
-    const tiempo = new Date().toLocaleTimeString()
-    chartData.value.labels.push(tiempo)
-    chartData.value.datasets[0].data.push(temperatura.value)
-    chartData.value.datasets[1].data.push(humedad.value)
-
+    // Crear copias de los arrays para evitar mutaciones reactivas en bucle
+    const newLabels = [...chartData.value.labels]
+    const newTempData = [...chartData.value.datasets[0].data]
+    const newHumData = [...chartData.value.datasets[1].data]
+    
+    newLabels.push(new Date().toLocaleTimeString())
+    newTempData.push(temperatura.value)
+    newHumData.push(humedad.value)
+    
     // Mantener solo los últimos 10 datos
-    if (chartData.value.labels.length > 10) {
-      chartData.value.labels.shift()
-      chartData.value.datasets[0].data.shift()
-      chartData.value.datasets[1].data.shift()
+    if (newLabels.length > 10) {
+      newLabels.shift()
+      newTempData.shift()
+      newHumData.shift()
+    }
+    
+    // Actualizar chartData de una sola vez
+    chartData.value = {
+      labels: newLabels,
+      datasets: [
+        {
+          ...chartData.value.datasets[0],
+          data: newTempData
+        },
+        {
+          ...chartData.value.datasets[1],
+          data: newHumData
+        }
+      ]
     }
   }, 3000)
+})
+
+// Limpiar el intervalo cuando el componente se desmonta
+onUnmounted(() => {
+  if (intervalo !== null) {
+    clearInterval(intervalo)
+  }
 })
 </script>
 
