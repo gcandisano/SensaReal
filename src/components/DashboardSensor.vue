@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted, computed } from 'vue'
+import { ref, onMounted, onUnmounted, computed, watch } from 'vue'
 import { Line } from 'vue-chartjs'
 import {
   Chart as ChartJS,
@@ -177,6 +177,29 @@ function agregarSensor() {
   console.log('ID del nuevo sensor:', nuevoSensorId.value)
   cerrarModal()
 }
+
+// Agregar una lista de microcontroladores disponibles
+const microcontroladores = ref([
+  { id: 'mcu1', nombre: 'Microcontrolador 1' },
+  { id: 'mcu2', nombre: 'Microcontrolador 2' },
+  { id: 'mcu3', nombre: 'Microcontrolador 3' },
+])
+
+// Variable para almacenar el microcontrolador seleccionado
+const microcontroladorSeleccionado = ref(microcontroladores.value[0].id)
+
+// Función para actualizar los datos del dashboard según el microcontrolador seleccionado
+function actualizarDatos() {
+  // Aquí deberías hacer la conexión con tu backend real para obtener los datos del microcontrolador seleccionado
+  console.log('Microcontrolador seleccionado:', microcontroladorSeleccionado.value)
+  // Simular actualización de datos
+  temperatura.value = Math.random() * 30 + 10
+  humedad.value = Math.random() * 50 + 30
+}
+
+// Llamar a actualizarDatos cuando se monta el componente y cuando cambia el microcontrolador seleccionado
+onMounted(actualizarDatos)
+watch(microcontroladorSeleccionado, actualizarDatos)
 </script>
 
 <template>
@@ -190,6 +213,17 @@ function agregarSensor() {
             Sistema activo
           </div>
         </div>
+
+        <!-- Selector de microcontroladores -->
+        <div class="selector-microcontrolador">
+          <label for="microcontrolador">Seleccionar Microcontrolador:</label>
+          <select id="microcontrolador" v-model="microcontroladorSeleccionado">
+            <option v-for="mcu in microcontroladores" :key="mcu.id" :value="mcu.id">
+              {{ mcu.nombre }}
+            </option>
+          </select>
+        </div>
+
         <div v-if="mostrarModal" class="modal-overlay">
           <div class="modal">
             <h2>Agregar Sensor</h2>

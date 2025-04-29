@@ -272,3 +272,35 @@
 .add-sensor-button:hover {
   background-color: #45a049;
 }
+
+/* Estilos para el selector de microcontroladores */
+.selector-microcontrolador {
+  margin-bottom: 15px;
+  display: flex;
+  align-items: center;
+}
+
+.selector-microcontrolador label {
+  margin-right: 10px;
+  color: var(--color-text);
+  font-weight: bold;
+}
+
+.selector-microcontrolador select {
+  padding: 8px 12px;
+  border-radius: 5px;
+  border: 1px solid var(--color-border);
+  background-color: var(--color-background);
+  color: var(--color-text);
+  font-size: 1rem;
+  transition: border-color 0.3s ease;
+}
+
+.selector-microcontrolador select:focus {
+  border-color: var(--color-primary);
+  outline: none;
+}
+
+.selector-microcontrolador select:hover {
+  border-color: var(--color-primary-light);
+}

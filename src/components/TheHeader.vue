@@ -144,7 +144,9 @@ window.addEventListener('click', handleClickOutside)
         v-model="nuevoSensorId"
         style="background-color: #333; color: #fff; border: 1px solid #555"
       />
-      <label for="temp-min" style="color: #fff">Límite de Temperatura Mínima: {{ limiteTemperaturaMin }}</label>
+      <label for="temp-min" style="color: #fff"
+        >Límite de Temperatura Mínima: {{ limiteTemperaturaMin }}</label
+      >
       <input
         type="range"
         id="temp-min"
@@ -152,9 +154,11 @@ window.addEventListener('click', handleClickOutside)
         min="-40"
         max="80"
         step="0.5"
-        style="width: 100%;"
+        style="width: 100%"
       />
-      <label for="temp-max" style="color: #fff">Límite de Temperatura Máxima: {{ limiteTemperaturaMax }}</label>
+      <label for="temp-max" style="color: #fff"
+        >Límite de Temperatura Máxima: {{ limiteTemperaturaMax }}</label
+      >
       <input
         type="range"
         id="temp-max"
@@ -162,9 +166,11 @@ window.addEventListener('click', handleClickOutside)
         min="-40"
         max="80"
         step="0.5"
-        style="width: 100%;"
+        style="width: 100%"
       />
-      <label for="humedad-min" style="color: #fff">Límite de Humedad Mínima: {{ limiteHumedadMin }}%</label>
+      <label for="humedad-min" style="color: #fff"
+        >Límite de Humedad Mínima: {{ limiteHumedadMin }}%</label
+      >
       <input
         type="range"
         id="humedad-min"
@@ -172,9 +178,11 @@ window.addEventListener('click', handleClickOutside)
         min="0"
         max="100"
         step="1"
-        style="width: 100%;"
+        style="width: 100%"
       />
-      <label for="humedad-max" style="color: #fff">Límite de Humedad Máxima: {{ limiteHumedadMax }}%</label>
+      <label for="humedad-max" style="color: #fff"
+        >Límite de Humedad Máxima: {{ limiteHumedadMax }}%</label
+      >
       <input
         type="range"
         id="humedad-max"
@@ -182,7 +190,7 @@ window.addEventListener('click', handleClickOutside)
         min="0"
         max="100"
         step="1"
-        style="width: 100%;"
+        style="width: 100%"
       />
       <button @click="agregarSensor" style="background-color: #4caf50; color: #fff">Agregar</button>
       <button @click="cerrarModal" style="background-color: #e53935; color: #fff">Cancelar</button>

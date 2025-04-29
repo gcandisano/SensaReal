@@ -10,7 +10,7 @@ alwaysApply: true
 - Los endpoints deben estar centralizados en el archivo `endpoints.ts` y ser utilizados a través de constantes definidas en `API_ROUTES`.
 
 ## Estilos
-- Los estilos deben ser definidos en el archivo `styles.css`.
+- Los estilos deben ser definidos en el archivo `styles.css`, nunca en en el mismo componente o vista .
 - Utilizar variables CSS para colores y otros valores repetidos para mantener la consistencia visual.
 
 ## Componentes
