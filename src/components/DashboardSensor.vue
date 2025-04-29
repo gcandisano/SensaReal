@@ -42,29 +42,29 @@ const chartOptions = {
       beginAtZero: true,
       ticks: {
         font: {
-          size: 10
-        }
-      }
+          size: 10,
+        },
+      },
     },
     x: {
       ticks: {
         font: {
-          size: 10
+          size: 10,
         },
-        maxRotation: 0
-      }
-    }
+        maxRotation: 0,
+      },
+    },
   },
   plugins: {
     legend: {
       labels: {
         boxWidth: 15,
         font: {
-          size: 11
-        }
-      }
-    }
-  }
+          size: 11,
+        },
+      },
+    },
+  },
 }
 
 // Propiedades computadas para los estados
@@ -126,31 +126,31 @@ onMounted(() => {
     const newLabels = [...chartData.value.labels]
     const newTempData = [...chartData.value.datasets[0].data]
     const newHumData = [...chartData.value.datasets[1].data]
-    
+
     newLabels.push(new Date().toLocaleTimeString())
     newTempData.push(temperatura.value)
     newHumData.push(humedad.value)
-    
+
     // Mantener solo los últimos 10 datos
     if (newLabels.length > 10) {
       newLabels.shift()
       newTempData.shift()
       newHumData.shift()
     }
-    
+
     // Actualizar chartData de una sola vez
     chartData.value = {
       labels: newLabels,
       datasets: [
         {
           ...chartData.value.datasets[0],
-          data: newTempData
+          data: newTempData,
         },
         {
           ...chartData.value.datasets[1],
-          data: newHumData
-        }
-      ]
+          data: newHumData,
+        },
+      ],
     }
   }, 3000)
 })
@@ -161,6 +161,22 @@ onUnmounted(() => {
     clearInterval(intervalo)
   }
 })
+
+const mostrarModal = ref(false)
+const nuevoSensorId = ref('')
+
+function abrirModal() {
+  mostrarModal.value = true
+}
+
+function cerrarModal() {
+  mostrarModal.value = false
+}
+
+function agregarSensor() {
+  console.log('ID del nuevo sensor:', nuevoSensorId.value)
+  cerrarModal()
+}
 </script>
 
 <template>
@@ -172,6 +188,15 @@ onUnmounted(() => {
           <div class="status-indicator">
             <span class="dot active"></span>
             Sistema activo
+          </div>
+        </div>
+        <div v-if="mostrarModal" class="modal-overlay">
+          <div class="modal">
+            <h2>Agregar Sensor</h2>
+            <label for="sensor-id">ID del Sensor:</label>
+            <input type="text" id="sensor-id" v-model="nuevoSensorId" />
+            <button @click="agregarSensor">Agregar</button>
+            <button @click="cerrarModal">Cancelar</button>
           </div>
         </div>
 
@@ -501,26 +526,100 @@ onUnmounted(() => {
   .dashboard-content {
     gap: 15px;
   }
-  
+
   .info-card h3 {
     font-size: 1rem;
     margin-bottom: 10px;
   }
-  
+
   .grafico {
     height: 250px;
   }
-  
+
   .grafico-container {
     min-height: 250px;
   }
-  
+
   .valor {
     font-size: 2rem;
   }
-  
+
   h2 {
     font-size: 1.2rem;
   }
+}
+
+.header {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  padding: 10px;
+  background-color: #1a1a1a;
+}
+
+.add-sensor-button {
+  margin-right: 10px;
+}
+
+.user-icon {
+  /* Estilos para el icono de usuario */
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal {
+  background-color: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.modal h2 {
+  margin-top: 0;
+}
+
+.modal label {
+  display: block;
+  margin-bottom: 5px;
+}
+
+.modal input {
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.modal button {
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-right: 10px;
+}
+
+.modal button:hover {
+  background-color: #45a049;
+}
+
+.modal button:last-child {
+  background-color: #f44336;
+}
+
+.modal button:last-child:hover {
+  background-color: #e53935;
 }
 </style>

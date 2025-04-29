@@ -1,11 +1,13 @@
 # SensaReal 🌡️
 
-Sistema de monitoreo de temperatura y humedad en tiempo real utilizando sensores DHT22.
+Este es un proyecto basado en Vue.js que utiliza Vite como herramienta de construcción. A continuación, se detallan las instrucciones para configurar y ejecutar el proyecto.
 
 ## 📋 Requisitos Previos
 
-- Node.js (v22.0.0 o superior)
-- npm (incluido con Node.js)
+Asegúrate de tener instalados los siguientes programas:
+
+- Node.js (versión 14 o superior)
+- npm (versión 6 o superior)
 - Navegador web moderno
 - Editor de código recomendado: VSCode
 
@@ -20,16 +22,13 @@ Sistema de monitoreo de temperatura y humedad en tiempo real utilizando sensores
 
 ## ⚙️ Instalación
 
-1. Clonar el repositorio:
-```sh
-git clone https://github.com/tu-usuario/sensareal.git
-cd sensareal
-```
+1. Clona este repositorio en tu máquina local.
+2. Navega al directorio del proyecto.
+3. Ejecuta el siguiente comando para instalar las dependencias:
 
-2. Instalar dependencias:
-```sh
-npm install
-```
+   ```bash
+   npm install
+   ```
 
 ## 🚀 Comandos Disponibles
 
@@ -98,7 +97,6 @@ TypeScript no puede manejar la información de tipos para las importaciones `.vu
 - Interfaces para objetos complejos
 
 ### Git
-- Commits en español
 - Formato: `tipo: descripción corta`
 - Tipos: feat, fix, docs, style, refactor, test, chore
 
@@ -114,14 +112,8 @@ Crear un archivo `.env` en la raíz del proyecto:
 VITE_API_URL=tu_url_api
 ```
 
-## 📄 Licencia
 
-MIT
 
 ## 👥 Contribución
 
-1. Fork el proyecto
-2. Crea tu rama (`git checkout -b feature/AmazingFeature`)
-3. Commit tus cambios (`git commit -m 'feat: Añadir nueva funcionalidad'`)
-4. Push a la rama (`git push origin feature/AmazingFeature`)
-5. Abre un Pull Request
+

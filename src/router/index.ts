@@ -11,19 +11,19 @@ const router = createRouter({
       path: '/login',
       name: 'login',
       component: LoginView,
-      meta: { requiresGuest: true }
+      meta: { requiresGuest: true },
     },
     {
       path: '/register',
       name: 'register',
       component: RegisterView,
-      meta: { requiresGuest: true }
+      meta: { requiresGuest: true },
     },
     {
       path: '/',
       name: 'home',
       component: HomeView,
-      meta: { requiresAuth: true }
+      meta: { requiresAuth: true },
     },
     {
       path: '/about',
@@ -32,13 +32,13 @@ const router = createRouter({
       // this generates a separate chunk (About.[hash].js) for this route
       // which is lazy-loaded when the route is visited.
       component: () => import('../views/AboutView.vue'),
-      meta: { requiresAuth: true }
+      meta: { requiresAuth: true },
     },
     {
       path: '/register-sensor',
       name: 'register-sensor',
       component: () => import('../views/RegisterSensorView.vue'),
-      meta: { requiresAuth: true }
+      meta: { requiresAuth: true },
     },
   ],
 })
@@ -47,15 +47,15 @@ const router = createRouter({
 router.beforeEach((to, from, next) => {
   const authStore = useAuthStore()
   const isAuthenticated = authStore.isAuthenticated
-  
+
   // Si la ruta requiere autenticación y el usuario no está autenticado
   if (to.meta.requiresAuth && !isAuthenticated) {
     next('/login')
-  } 
+  }
   // Si la ruta es solo para invitados y el usuario está autenticado
   else if (to.meta.requiresGuest && isAuthenticated) {
     next('/')
-  } 
+  }
   // En cualquier otro caso, permitir la navegación
   else {
     next()

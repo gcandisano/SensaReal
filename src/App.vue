@@ -73,4 +73,30 @@ const showHeader = computed(() => route.path !== '/login' && route.path !== '/re
 .weather-icon {
   color: #4a90e2;
 }
+
+.app-header {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  padding: 10px;
+  background-color: #1a1a1a;
+}
+
+.add-sensor-button {
+  margin-right: 10px;
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.add-sensor-button:hover {
+  background-color: #45a049;
+}
+
+.user-icon {
+  /* Estilos para el icono de usuario */
+}
 </style>

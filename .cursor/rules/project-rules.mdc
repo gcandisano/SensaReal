@@ -1,0 +1,26 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# Reglas y Convenciones del Proyecto
+
+## Llamadas al Backend
+- Las funciones que realizan llamadas al backend deben estar ubicadas en archivos separados dentro del directorio `services/api`.
+- Los endpoints deben estar centralizados en el archivo `endpoints.ts` y ser utilizados a través de constantes definidas en `API_ROUTES`.
+
+## Estilos
+- Los estilos deben ser definidos en el archivo `styles.css`.
+- Utilizar variables CSS para colores y otros valores repetidos para mantener la consistencia visual.
+
+## Componentes
+- Los componentes deben ser modulares y reutilizables.
+- Utilizar `script setup` en componentes Vue para una sintaxis más limpia y eficiente.
+
+## Manejo de Errores
+- Capturar y manejar errores en las funciones asíncronas para evitar fallos inesperados.
+- Mostrar mensajes de error claros en la consola para facilitar la depuración.
+
+## Estructura del Proyecto
+- Mantener una estructura de directorios clara y organizada.
+- Separar la lógica de negocio de la presentación para mejorar la mantenibilidad del código.

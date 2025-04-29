@@ -21,12 +21,12 @@ const handleLogin = async () => {
     isLoading.value = true
     const response = await authService.login({
       email: email.value,
-      password: password.value
+      password: password.value,
     })
 
     // Guardar el token y la información del usuario en el store
     authStore.setAuth(response)
-    
+
     // Redirigir al dashboard después del login exitoso
     router.push('/')
   } catch (e: any) {
