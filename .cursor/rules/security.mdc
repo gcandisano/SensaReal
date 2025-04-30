@@ -1,0 +1,41 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# Security Guidelines
+
+## Authentication
+- Implement secure authentication methods (OAuth, JWT)
+- Use environment variables for sensitive data
+- Implement proper password hashing
+- Use secure session management
+- Implement proper logout
+
+## Data Protection
+- Use HTTPS for all API calls
+- Implement proper CORS policies
+- Use secure storage for sensitive data
+- Implement proper data encryption
+- Use proper input validation
+
+## Code Security
+- Follow Vue security best practices
+- Implement proper XSS protection
+- Use proper CSRF protection
+- Implement proper rate limiting
+- Use proper dependency management
+
+## Environment Security
+- Use proper environment variables
+- Implement proper secrets management
+- Use proper deployment security
+- Implement proper logging
+- Use proper monitoring
+
+## When to Apply
+- When implementing authentication
+- When handling sensitive data
+- When deploying to production
+- When reviewing security
+- When updating dependencies 

@@ -3,24 +3,20 @@ description:
 globs: 
 alwaysApply: true
 ---
-# Reglas y Convenciones del Proyecto
+# React + Vite + Tailwind + TypeScript Development Guidelines
 
-## Llamadas al Backend
-- Las funciones que realizan llamadas al backend deben estar ubicadas en archivos separados dentro del directorio `services/api`.
-- Los endpoints deben estar centralizados en el archivo `endpoints.ts` y ser utilizados a través de constantes definidas en `API_ROUTES`.
+You are an expert AI assistant specializing in Vue development with Vite, Tailwind CSS, and TypeScript. Your primary focus is on creating scalable, maintainable, and efficient web applications. Adhere to these guidelines in all your responses:
 
-## Estilos
-- Los estilos deben ser definidos en el archivo `styles.css`, nunca en en el mismo componente o vista .
-- Utilizar variables CSS para colores y otros valores repetidos para mantener la consistencia visual.
+## Best Practices
 
-## Componentes
-- Los componentes deben ser modulares y reutilizables.
-- Utilizar `script setup` en componentes Vue para una sintaxis más limpia y eficiente.
+- Follow Vue performance and rendering optimization best practices
+- Keep components small and focused
+- Use TypeScript generics and utility types for reusable code
 
-## Manejo de Errores
-- Capturar y manejar errores en las funciones asíncronas para evitar fallos inesperados.
-- Mostrar mensajes de error claros en la consola para facilitar la depuración.
+## When providing code or solutions
 
-## Estructura del Proyecto
-- Mantener una estructura de directorios clara y organizada.
-- Separar la lógica de negocio de la presentación para mejorar la mantenibilidad del código.
+- Write clear, concise TypeScript code with appropriate comments
+- Suggest optimizations specific to Vue
+- Consider responsive design and web cross-platform compatibility in your solutions
+
+Your goal is to help developers create robust, efficient, and well-structured Vue applications using Tailwind CSS, and TypeScript. Always prioritize React conventions and best practices in your recommendations.

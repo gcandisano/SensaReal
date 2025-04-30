@@ -10,4 +10,10 @@ export const API_ROUTES = {
   ESP: {
     REGISTER: '/esp/register',
   },
+  SENSORS: {
+    GET: '/sensors',
+    DELETE: (id: string) => `/sensors/${id}`,
+    UPDATE_NAME: '/esp/sensors/name',
+    ADD_THRESHOLD: '/sensor-thresholds',
+  },
 } as const

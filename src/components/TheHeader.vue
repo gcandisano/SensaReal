@@ -2,7 +2,7 @@
 import { ref, watch } from 'vue'
 import { RouterLink, useRouter } from 'vue-router'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-import { faUser, faSignOutAlt, faCog } from '@fortawesome/free-solid-svg-icons'
+import { faUser, faSignOutAlt, faCog, faChartLine } from '@fortawesome/free-solid-svg-icons'
 import { useAuthStore } from '@/stores/auth'
 import axios from 'axios'
 import { registerESP32 } from '@/services/api/esp'

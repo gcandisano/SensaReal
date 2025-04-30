@@ -1,0 +1,41 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# Performance Guidelines
+
+## Rendering Optimization
+- Use proper component lifecycle hooks
+- Implement proper lazy loading
+- Use proper memoization
+- Implement proper virtual scrolling
+- Use proper code splitting
+
+## State Management
+- Use proper state initialization
+- Implement proper state updates
+- Use proper computed properties
+- Implement proper watchers
+- Use proper state persistence
+
+## Asset Optimization
+- Optimize images and assets
+- Use proper caching strategies
+- Implement proper lazy loading
+- Use proper compression
+- Implement proper CDN usage
+
+## Code Optimization
+- Use proper tree shaking
+- Implement proper code splitting
+- Use proper bundling
+- Implement proper minification
+- Use proper source maps
+
+## When to Apply
+- When optimizing existing code
+- When implementing new features
+- When reviewing performance
+- When fixing performance issues
+- When deploying to production 

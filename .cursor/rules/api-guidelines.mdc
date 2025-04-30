@@ -1,0 +1,41 @@
+---
+description: 
+globs: *.ts
+alwaysApply: false
+---
+# API Integration Guidelines
+
+## API Structure
+- Use Axios for HTTP requests
+- Implement proper error handling
+- Use TypeScript for API types
+- Follow RESTful conventions
+- Implement proper request/response interceptors
+
+## API Organization
+- Keep API calls in `services/api` directory
+- Use `endpoints.ts` for route definitions
+- Implement proper API versioning
+- Use environment variables for API URLs
+- Implement proper request caching
+
+## Data Handling
+- Implement proper data validation
+- Use TypeScript interfaces for API responses
+- Handle loading states
+- Implement proper error messages
+- Use proper data transformation
+
+## Authentication
+- Implement proper token management
+- Handle token refresh
+- Implement proper logout
+- Use secure storage for tokens
+- Implement proper session management
+
+## When to Apply
+- When implementing new API endpoints
+- When refactoring existing API calls
+- When handling API errors
+- When implementing authentication
+- When reviewing API security

@@ -51,7 +51,7 @@ npm run format
 
 ## 📁 Estructura del Proyecto
 
-```
+```bash
 sensareal/
 ├── src/
 │   ├── assets/         # Recursos estáticos
@@ -69,6 +69,7 @@ sensareal/
 ### VSCode
 
 Extensiones recomendadas:
+
 - Vue.volar (Volar) - Deshabilitar Vetur si está instalado
 - esbenp.prettier-vscode
 
@@ -81,22 +82,26 @@ TypeScript no puede manejar la información de tipos para las importaciones `.vu
 ## 📝 Convenciones de Código
 
 ### Nombrado
+
 - Componentes: PascalCase (ej: `TheHeader.vue`)
 - Archivos de utilidad: camelCase (ej: `useAuth.ts`)
 - Constantes: UPPER_SNAKE_CASE
 - Variables y funciones: camelCase
 
 ### Estilos
+
 - Usar CSS con scope en componentes Vue
 - Variables CSS definidas en `assets/base.css`
 - Seguir la guía de estilos de Vue.js
 
 ### TypeScript
+
 - Usar tipos explícitos
 - Evitar `any`
 - Interfaces para objetos complejos
 
 ### Git
+
 - Formato: `tipo: descripción corta`
 - Tipos: feat, fix, docs, style, refactor, test, chore
 
@@ -108,12 +113,8 @@ Para configuración adicional, consulta la [Referencia de Configuración de Vite
 
 Crear un archivo `.env` en la raíz del proyecto:
 
-```
+```bash
 VITE_API_URL=tu_url_api
 ```
 
-
-
 ## 👥 Contribución
-
-

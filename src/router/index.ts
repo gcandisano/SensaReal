@@ -1,7 +1,8 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from '../views/HomeView.vue'
+import SensorView from '../views/SensorView.vue'
 import LoginView from '../views/LoginView.vue'
-import RegisterView from '../views/RegisterView.vue'
+import SensorListView from '../views/SensorListView.vue'
+import RegisterSensorView from '../views/RegisterSensorView.vue'
 import { useAuthStore } from '@/stores/auth'
 
 const router = createRouter({
@@ -16,28 +17,25 @@ const router = createRouter({
     {
       path: '/register',
       name: 'register',
-      component: RegisterView,
+      component: LoginView,
       meta: { requiresGuest: true },
     },
     {
-      path: '/',
-      name: 'home',
-      component: HomeView,
+      path: '/sensors/:id',
+      name: 'sensor',
+      component: SensorView,
       meta: { requiresAuth: true },
     },
     {
-      path: '/about',
-      name: 'about',
-      // route level code-splitting
-      // this generates a separate chunk (About.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
-      component: () => import('../views/AboutView.vue'),
+      path: '/',
+      name: 'sensors',
+      component: SensorListView,
       meta: { requiresAuth: true },
     },
     {
       path: '/register-sensor',
       name: 'register-sensor',
-      component: () => import('../views/RegisterSensorView.vue'),
+      component: RegisterSensorView,
       meta: { requiresAuth: true },
     },
   ],

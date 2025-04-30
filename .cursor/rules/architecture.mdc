@@ -1,0 +1,48 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# Architecture Guidelines
+
+## Project Structure
+- Organize code into logical components and screens
+- Follow a feature-based folder structure:
+  ```
+  src/
+  ├── components/     # Reusable UI components
+  ├── views/         # Page components
+  ├── services/      # Business logic and API services
+  ├── stores/        # State management
+  ├── types/         # TypeScript type definitions
+  ├── utils/         # Utility functions
+  ├── assets/        # Static assets
+  └── router/        # Routing configuration
+  ```
+
+## Code Organization
+- Separate business logic from presentation
+- Use TypeScript for type safety
+- Use tailwind css for styling and avoid using css in the style section
+- Follow the Single Responsibility Principle
+- Keep files focused and maintainable
+- Use descriptive naming conventions
+
+## State Management
+- Use Pinia for global state management
+- Keep component state local when possible
+- Use computed properties for derived state
+- Implement proper state initialization
+
+## Routing
+- Use Vue Router for navigation
+- Implement proper route guards
+- Use TypeScript for route definitions
+- Keep route configurations clean and maintainable
+
+## When to Apply
+- When starting a new project
+- When adding new features
+- When refactoring existing code
+- When reviewing code architecture
+- When onboarding new team members 
