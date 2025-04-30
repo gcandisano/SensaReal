@@ -4,14 +4,14 @@ import { faEnvelope } from '@fortawesome/free-solid-svg-icons'
 </script>
 
 <template>
-  <div class="min-h-screen flex items-center justify-center bg-[#1E1E1E] p-4">
-    <div class="w-full max-w-[500px] bg-[#2C2C2C] p-8 rounded-2xl shadow-xl flex flex-col items-center gap-8 text-center">
+  <div class="min-h-screen flex items-center justify-center p-4">
+    <div class="w-full max-w-[500px] bg-[#2C2C2C] p-8 rounded-2xl shadow-xl flex flex-col items-center gap-6 text-center">
       <FontAwesomeIcon 
         :icon="faEnvelope" 
         class="text-[#4C8FE9] text-6xl animate-bounce"
       />
       
-      <div class="space-y-4">
+      <div class="flex flex-col gap-2">
         <h1 class="text-3xl font-normal text-white">Verifica tu correo electrónico</h1>
         <p class="text-gray-400 text-lg">
           Hemos enviado un enlace de verificación a tu correo electrónico.

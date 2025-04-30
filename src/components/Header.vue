@@ -55,7 +55,7 @@ const logout = async () => {
       </button>
 
       <button 
-        class="flex items-center justify-center w-10 h-10 rounded-full bg-[#2C2C2C] text-gray-400 hover:text-white hover:bg-[#357abd] transition-all duration-200"
+        class="flex items-center justify-center w-10 h-10 rounded-full bg-[#2C2C2C] text-gray-400 hover:text-white hover:bg-[#357abd] transition-all duration-200 cursor-pointer"
         @click="addDevice"
         title="Agregar dispositivo"
       >
