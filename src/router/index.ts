@@ -3,6 +3,7 @@ import SensorView from '../views/SensorView.vue'
 import LoginView from '../views/LoginView.vue'
 import SensorListView from '../views/SensorListView.vue'
 import RegisterSensorView from '../views/RegisterSensorView.vue'
+import VerifyEmailView from '../views/VerifyEmailView.vue'
 import { useAuthStore } from '@/stores/auth'
 
 const router = createRouter({
@@ -18,6 +19,12 @@ const router = createRouter({
       path: '/register',
       name: 'register',
       component: LoginView,
+      meta: { requiresGuest: true },
+    },
+    {
+      path: '/verify-email',
+      name: 'verify-email',
+      component: VerifyEmailView,
       meta: { requiresGuest: true },
     },
     {

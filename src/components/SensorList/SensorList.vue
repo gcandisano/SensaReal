@@ -1,14 +1,16 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-import { faSearch, faSort, faSortUp, faSortDown } from '@fortawesome/free-solid-svg-icons'
+import { faSearch, faSort, faSortUp, faSortDown, faMicrochip } from '@fortawesome/free-solid-svg-icons'
 import type { Sensor } from '@/types/sensors'
 import SensorListItem from '@/components/SensorList/SensorListItem.vue'
 import { sensorsService } from '@/services/api/sensors'
+import { useRouter } from 'vue-router'
 
 const sensors = ref<Sensor[]>([])
 const loading = ref(true)
 const error = ref<string | null>(null)
+const router = useRouter()
 
 const filterOptions = ['Todos', 'Asignado', 'No asignado'] as const
 type FilterOption = (typeof filterOptions)[number]
@@ -103,7 +105,7 @@ onMounted(() => {
 <template>
   <div v-if="loading" class="text-center py-8">
     <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-[#4a90e2] mx-auto"></div>
-    <p class="mt-4 text-gray-600">Loading sensors...</p>
+    <p class="mt-4 text-gray-600">Cargando sensores...</p>
   </div>
 
   <div v-else-if="error" class="text-center py-8">
@@ -116,7 +118,24 @@ onMounted(() => {
     </button>
   </div>
 
-  <div v-else class="flex flex-col gap-4">
+  <div v-else class="flex flex-col gap-4 min-h-[calc(100vh-200px)]">
+    <!-- No Sensors State -->
+    <div v-if="filteredAndSortedSensors.length === 0" class="flex-1 flex items-center justify-center">
+      <div class="w-full max-w-[500px] bg-[#2C2C2C] p-8 rounded-2xl shadow-xl flex flex-col items-center gap-6 text-center">
+        <FontAwesomeIcon 
+          :icon="faMicrochip" 
+          class="text-[#4C8FE9] text-6xl animate-bounce"
+        />
+        <p class="text-3xl font-normal text-white">No hay sensores añadidos aún</p>
+        <button 
+          class="px-6 py-2 bg-[#4C8FE9] text-white rounded-lg hover:bg-[#4080D5] transition-colors duration-300 cursor-pointer" 
+          @click="addDevice"
+        >
+          Añadir Sensor
+        </button>
+      </div>
+    </div>
+
     <!-- Search and Filters -->
     <div class="flex flex-col md:flex-row gap-4">
       <div class="flex-1">
