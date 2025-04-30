@@ -15,11 +15,11 @@ const authStore = useAuthStore()
 const showUserMenu = ref(false)
 
 const navigateToSensors = () => {
-  router.push('/sensors')
+  router.push('/')
 }
 
 const addDevice = () => {
-  router.push('/add-device')
+  router.push('/register-sensor')
 }
 
 const toggleUserMenu = () => {
