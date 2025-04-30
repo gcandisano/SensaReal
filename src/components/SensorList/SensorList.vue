@@ -11,7 +11,7 @@ const loading = ref(true)
 const error = ref<string | null>(null)
 
 const filterOptions = ['Todos', 'Asignado', 'No asignado'] as const
-type FilterOption = typeof filterOptions[number]
+type FilterOption = (typeof filterOptions)[number]
 
 const searchQuery = ref('')
 const sortField = ref<'name' | 'temperature' | 'humidity'>('name')
@@ -26,15 +26,15 @@ const filteredAndSortedSensors = computed(() => {
   // Apply search filter
   if (searchQuery.value) {
     const query = searchQuery.value.toLowerCase()
-    result = result.filter(sensor =>
-      sensor?.name?.toLowerCase().includes(query)
-    )
+    result = result.filter((sensor) => sensor?.name?.toLowerCase().includes(query))
   }
 
   // Apply active status filter
   if (activeFilter.value !== 'Todos') {
-    result = result.filter(sensor =>
-      activeFilter.value === 'Asignado' ? sensor?.status === 'ASSIGNED' : sensor?.status === 'UNASSIGNED'
+    result = result.filter((sensor) =>
+      activeFilter.value === 'Asignado'
+        ? sensor?.status === 'ASSIGNED'
+        : sensor?.status === 'UNASSIGNED',
     )
   }
 
@@ -85,14 +85,14 @@ const fetchSensors = async () => {
 const handleDeleteSensor = async (id: string) => {
   try {
     await sensorsService.deleteSensor(id)
-    sensors.value = sensors.value.filter(sensor => sensor.id !== id)
+    sensors.value = sensors.value.filter((sensor) => sensor.id !== id)
   } catch (err) {
     error.value = err instanceof Error ? err.message : 'An error occurred'
   }
 }
 
 const handleUpdateSensor = async (sensor: Sensor) => {
-  sensors.value = sensors.value.map(s => s.sensorId === sensor.sensorId ? sensor : s)
+  sensors.value = sensors.value.map((s) => (s.sensorId === sensor.sensorId ? sensor : s))
 }
 
 onMounted(() => {
@@ -108,8 +108,10 @@ onMounted(() => {
 
   <div v-else-if="error" class="text-center py-8">
     <p class="text-red-500">{{ error }}</p>
-    <button @click="fetchSensors"
-      class="mt-4 px-4 py-2 bg-[#4a90e2] text-white rounded-lg hover:bg-[#357abd] transition-colors duration-300">
+    <button
+      @click="fetchSensors"
+      class="mt-4 px-4 py-2 bg-[#4a90e2] text-white rounded-lg hover:bg-[#357abd] transition-colors duration-300"
+    >
       Retry
     </button>
   </div>
@@ -119,18 +121,30 @@ onMounted(() => {
     <div class="flex flex-col md:flex-row gap-4">
       <div class="flex-1">
         <div class="relative">
-          <input v-model="searchQuery" type="text" placeholder="Buscar sensor..."
-            class="w-full pl-10 pr-4 py-2 rounded-lg bg-[#2C2C2C] text-gray-200 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#4a90e2] focus:border-transparent" />
-          <FontAwesomeIcon :icon="faSearch" class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+          <input
+            v-model="searchQuery"
+            type="text"
+            placeholder="Buscar sensor..."
+            class="w-full pl-10 pr-4 py-2 rounded-lg bg-[#2C2C2C] text-gray-200 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#4a90e2] focus:border-transparent"
+          />
+          <FontAwesomeIcon
+            :icon="faSearch"
+            class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+          />
         </div>
       </div>
       <div class="flex gap-2">
-        <button v-for="filter in filterOptions" :key="filter" @click="activeFilter = filter" :class="[
-          'px-4 py-2 rounded-lg transition-colors duration-300',
-          activeFilter === filter
-            ? 'bg-[#4a90e2] text-white'
-            : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-        ]">
+        <button
+          v-for="filter in filterOptions"
+          :key="filter"
+          @click="activeFilter = filter"
+          :class="[
+            'px-4 py-2 rounded-lg transition-colors duration-300',
+            activeFilter === filter
+              ? 'bg-[#4a90e2] text-white'
+              : 'bg-gray-100 text-gray-700 hover:bg-gray-200',
+          ]"
+        >
           {{ filter.charAt(0).toUpperCase() + filter.slice(1) }}
         </button>
       </div>
@@ -138,18 +152,24 @@ onMounted(() => {
 
     <!-- Sort Headers -->
     <div class="flex gap-4 text-sm text-gray-300">
-      <button @click="toggleSort('name')"
-        class="flex items-center gap-1 hover:text-[#4a90e2] transition-colors duration-300">
+      <button
+        @click="toggleSort('name')"
+        class="flex items-center gap-1 hover:text-[#4a90e2] transition-colors duration-300"
+      >
         Nombre
         <FontAwesomeIcon :icon="getSortIcon('name')" />
       </button>
-      <button @click="toggleSort('temperature')"
-        class="flex items-center gap-1 hover:text-[#4a90e2] transition-colors duration-300">
+      <button
+        @click="toggleSort('temperature')"
+        class="flex items-center gap-1 hover:text-[#4a90e2] transition-colors duration-300"
+      >
         Temperatura
         <FontAwesomeIcon :icon="getSortIcon('temperature')" />
       </button>
-      <button @click="toggleSort('humidity')"
-        class="flex items-center gap-1 hover:text-[#4a90e2] transition-colors duration-300">
+      <button
+        @click="toggleSort('humidity')"
+        class="flex items-center gap-1 hover:text-[#4a90e2] transition-colors duration-300"
+      >
         Humedad
         <FontAwesomeIcon :icon="getSortIcon('humidity')" />
       </button>
@@ -157,8 +177,13 @@ onMounted(() => {
 
     <!-- Sensor List -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-      <SensorListItem v-for="sensor in filteredAndSortedSensors" :key="sensor.id" :sensor="sensor"
-        @delete="handleDeleteSensor" @update="handleUpdateSensor" />
+      <SensorListItem
+        v-for="sensor in filteredAndSortedSensors"
+        :key="sensor.id"
+        :sensor="sensor"
+        @delete="handleDeleteSensor"
+        @update="handleUpdateSensor"
+      />
     </div>
   </div>
 </template>

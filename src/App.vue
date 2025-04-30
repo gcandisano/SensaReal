@@ -9,10 +9,9 @@ const showHeader = computed(() => route.path !== '/login' && route.path !== '/re
 
 <template>
   <div class="app-container">
-    <Header v-if="showHeader"/>
+    <Header v-if="showHeader" />
     <RouterView />
   </div>
 </template>
 
-<style scoped>
-</style> 
+<style scoped></style>

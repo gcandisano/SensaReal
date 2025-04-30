@@ -13,6 +13,16 @@ export const sensorsService = {
     }
   },
 
+  async createSensor(id: string, name: string): Promise<any> {
+    try {
+      const response = await api.post(API_ROUTES.SENSORS.GET, { id, name })
+      return response.data
+    } catch (error) {
+      console.error('Error creating sensor:', error)
+      throw error
+    }
+  },
+
   async deleteSensor(id: string): Promise<void> {
     try {
       await api.delete(API_ROUTES.SENSORS.DELETE(id))
@@ -32,9 +42,19 @@ export const sensorsService = {
     }
   },
 
-  async addThreshold(sensorId: string, threshold: number, condition: string, type: string): Promise<any> {
+  async addThreshold(
+    sensorId: string,
+    threshold: number,
+    condition: string,
+    type: string,
+  ): Promise<any> {
     try {
-      const response = await api.post(API_ROUTES.SENSORS.ADD_THRESHOLD, { sensorId, threshold, condition, type })
+      const response = await api.post(API_ROUTES.SENSORS.ADD_THRESHOLD, {
+        sensorId,
+        threshold,
+        condition,
+        type,
+      })
       return response.data
     } catch (error) {
       console.error('Error adding threshold:', error)

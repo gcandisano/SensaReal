@@ -4,6 +4,6 @@ import SensorList from '@/components/SensorList/SensorList.vue'
 
 <template>
   <div class="min-h-screen px-52 py-12">
-    <SensorList/>
+    <SensorList />
   </div>
 </template>

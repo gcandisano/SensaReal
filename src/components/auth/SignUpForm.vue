@@ -75,7 +75,9 @@ const togglePasswordVisibility = (field: 'password' | 'confirmPassword') => {
 </script>
 
 <template>
-  <div class="w-full min-w-[400px] min-h-[400px] max-w-[400px] bg-[#1E1E1E] p-8 rounded-2xl shadow-xl flex flex-col items-center justify-center gap-4">
+  <div
+    class="w-full min-w-[400px] min-h-[400px] max-w-[400px] bg-[#1E1E1E] p-8 rounded-2xl shadow-xl flex flex-col items-center justify-center gap-4"
+  >
     <h1 class="text-3xl font-normal text-center text-white">Crear Cuenta</h1>
 
     <form @submit.prevent="handleSignUp" class="flex flex-col gap-8 w-full">
@@ -120,16 +122,15 @@ const togglePasswordVisibility = (field: 'password' | 'confirmPassword') => {
               @click="togglePasswordVisibility('password')"
               class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-300 focus:outline-none"
             >
-              <FontAwesomeIcon
-                :icon="showPassword ? faEyeSlash : faEye"
-                class="text-xl"
-              />
+              <FontAwesomeIcon :icon="showPassword ? faEyeSlash : faEye" class="text-xl" />
             </button>
           </div>
         </div>
 
         <div class="flex flex-col gap-2">
-          <label for="confirmPassword" class="text-lg font-normal text-gray-400">Confirmar Contraseña</label>
+          <label for="confirmPassword" class="text-lg font-normal text-gray-400"
+            >Confirmar Contraseña</label
+          >
           <div class="relative">
             <input
               id="confirmPassword"
@@ -144,10 +145,7 @@ const togglePasswordVisibility = (field: 'password' | 'confirmPassword') => {
               @click="togglePasswordVisibility('confirmPassword')"
               class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-300 focus:outline-none"
             >
-              <FontAwesomeIcon
-                :icon="showConfirmPassword ? faEyeSlash : faEye"
-                class="text-xl"
-              />
+              <FontAwesomeIcon :icon="showConfirmPassword ? faEyeSlash : faEye" class="text-xl" />
             </button>
           </div>
         </div>
@@ -189,4 +187,4 @@ const togglePasswordVisibility = (field: 'password' | 'confirmPassword') => {
 .animate-fade-in {
   animation: fade-in 0.3s ease-in-out;
 }
-</style> 
+</style>

@@ -28,7 +28,12 @@ const isLoading = ref(false)
 const handleSubmit = async () => {
   try {
     isLoading.value = true
-    const response = await sensorsService.addThreshold(props.sensor.sensorId, parseFloat(threshold.value), condition.value, type.value)
+    const response = await sensorsService.addThreshold(
+      props.sensor.sensorId,
+      parseFloat(threshold.value),
+      condition.value,
+      type.value,
+    )
     console.log(response)
     toast.success('Umbral agregado correctamente')
     emit('threshold-added')
@@ -42,14 +47,12 @@ const handleSubmit = async () => {
 </script>
 
 <template>
-  <BaseModal
-    :is-open="isOpen"
-    title="Agregar umbral"
-    @close="emit('close')"
-  >
+  <BaseModal :is-open="isOpen" title="Agregar umbral" @close="emit('close')">
     <div class="flex flex-col gap-4">
       <div class="flex flex-col gap-2">
-        <label for="threshold-type" class="block text-sm font-medium text-gray-300">Tipo de umbral</label>
+        <label for="threshold-type" class="block text-sm font-medium text-gray-300"
+          >Tipo de umbral</label
+        >
         <select
           id="threshold-type"
           v-model="type"
@@ -62,7 +65,9 @@ const handleSubmit = async () => {
       </div>
 
       <div class="flex flex-col gap-2">
-        <label for="threshold-condition" class="block text-sm font-medium text-gray-300">Condición</label>
+        <label for="threshold-condition" class="block text-sm font-medium text-gray-300"
+          >Condición</label
+        >
         <select
           id="threshold-condition"
           v-model="condition"
@@ -101,9 +106,25 @@ const handleSubmit = async () => {
           :disabled="isLoading || !threshold"
         >
           <span v-if="isLoading" class="flex items-center gap-2">
-            <svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            <svg
+              class="animate-spin h-5 w-5 text-white"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+            >
+              <circle
+                class="opacity-25"
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="currentColor"
+                stroke-width="4"
+              ></circle>
+              <path
+                class="opacity-75"
+                fill="currentColor"
+                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+              ></path>
             </svg>
             Guardando...
           </span>
@@ -112,4 +133,4 @@ const handleSubmit = async () => {
       </div>
     </div>
   </BaseModal>
-</template> 
+</template>
