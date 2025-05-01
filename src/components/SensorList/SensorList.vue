@@ -1,7 +1,13 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-import { faSearch, faSort, faSortUp, faSortDown, faMicrochip } from '@fortawesome/free-solid-svg-icons'
+import {
+  faSearch,
+  faSort,
+  faSortUp,
+  faSortDown,
+  faMicrochip,
+} from '@fortawesome/free-solid-svg-icons'
 import type { Sensor } from '@/types/sensors'
 import SensorListItem from '@/components/SensorList/SensorListItem.vue'
 import { sensorsService } from '@/services/api/sensors'
@@ -75,7 +81,15 @@ const fetchSensors = async () => {
     loading.value = true
     error.value = null
     const response = await sensorsService.getSensors()
-    sensors.value = response
+    const mappedSensors = response.map((sensor) => ({
+      ...sensor,
+      lastReading: {
+        temperature: sensor.readings?.temperature || 0,
+        humidity: sensor.readings?.humidity || 0,
+        timestamp: sensor.readings?.timestamp || '',
+      },
+    }))
+    sensors.value = mappedSensors
     console.log(sensors.value)
   } catch (err) {
     error.value = err instanceof Error ? err.message : 'An error occurred'
@@ -120,15 +134,17 @@ onMounted(() => {
 
   <div v-else class="flex flex-col gap-4 min-h-[calc(100vh-200px)]">
     <!-- No Sensors State -->
-    <div v-if="filteredAndSortedSensors.length === 0" class="flex-1 flex items-center justify-center">
-      <div class="w-full max-w-[500px] bg-[#2C2C2C] p-8 rounded-2xl shadow-xl flex flex-col items-center gap-6 text-center">
-        <FontAwesomeIcon 
-          :icon="faMicrochip" 
-          class="text-[#4C8FE9] text-6xl animate-bounce"
-        />
+    <div
+      v-if="filteredAndSortedSensors.length === 0"
+      class="flex-1 flex items-center justify-center"
+    >
+      <div
+        class="w-full max-w-[500px] bg-[#2C2C2C] p-8 rounded-2xl shadow-xl flex flex-col items-center gap-6 text-center"
+      >
+        <FontAwesomeIcon :icon="faMicrochip" class="text-[#4C8FE9] text-6xl animate-bounce" />
         <p class="text-3xl font-normal text-white">No hay sensores añadidos aún</p>
-        <button 
-          class="px-6 py-2 bg-[#4C8FE9] text-white rounded-lg hover:bg-[#4080D5] transition-colors duration-300 cursor-pointer" 
+        <button
+          class="px-6 py-2 bg-[#4C8FE9] text-white rounded-lg hover:bg-[#4080D5] transition-colors duration-300 cursor-pointer"
           @click="addDevice"
         >
           Añadir Sensor

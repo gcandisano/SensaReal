@@ -4,7 +4,9 @@ import Header from '@/components/Header.vue'
 import { computed } from 'vue'
 
 const route = useRoute()
-const showHeader = computed(() => route.path !== '/login' && route.path !== '/register' && route.path !== '/verify-email')
+const showHeader = computed(
+  () => route.path !== '/login' && route.path !== '/register' && route.path !== '/verify-email',
+)
 </script>
 
 <template>
