@@ -13,7 +13,8 @@ const props = defineProps<Props>()
 const router = useRouter()
 
 const navigateToSensor = () => {
-  router.push(`/sensors/${props.sensor.sensorId}`)
+  console.log('propiedades', props.sensor)
+  router.push(`/sensors/${props.sensor.id}`)
 }
 </script>
 

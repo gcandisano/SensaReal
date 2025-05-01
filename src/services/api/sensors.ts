@@ -61,4 +61,14 @@ export const sensorsService = {
       throw error
     }
   },
+
+  async getSensorData(sensorId: string): Promise<any> {
+    try {
+      const response = await api.get(API_ROUTES.SENSORS.GET_SENSOR_DATA(sensorId))
+      return response.data
+    } catch (error) {
+      console.error('Error fetching sensor data:', error)
+      throw error
+    }
+  },
 }

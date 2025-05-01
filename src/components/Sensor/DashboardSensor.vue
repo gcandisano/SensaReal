@@ -11,12 +11,21 @@ import {
   Tooltip,
   Legend,
 } from 'chart.js'
+import { sensorsService } from '@/services/api/sensors'
+import { useRoute } from 'vue-router'
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend)
 
+const props = defineProps<{ sensorId: string }>()
+
 const temperatura = ref(0)
 const humedad = ref(0)
-const chartData = ref({
+let intervalo: number | null = null
+
+const chartData = ref<{
+  labels: string[]
+  datasets: { label: string; data: number[]; borderColor: string; tension: number }[]
+}>({
   labels: [],
   datasets: [
     {
@@ -112,33 +121,46 @@ const getHumedadMessage = computed(() => {
   }
 })
 
-// Variable para almacenar la referencia al intervalo
-let intervalo: number | null = null
+const route = useRoute()
+const sensorId = ref(route.params.id as string) // Extrae el sensorId de la ruta
 
-// Simular datos en tiempo real (reemplazar con tu API real)
-onMounted(() => {
-  // Aquí deberías hacer la conexión con tu backend real
-  intervalo = window.setInterval(() => {
-    temperatura.value = Math.random() * 30 + 10
-    humedad.value = Math.random() * 50 + 30
+// Define el tipo para los resultados del sensor
+interface SensorReading {
+  id: string
+  userId: string
+  sensorId: string
+  temperature: number
+  humidity: number
+  timestamp: string
+  batteryLevel: number | null
+  signalStrength: number | null
+  createdAt: string
+  updatedAt: string
+}
 
-    // Crear copias de los arrays para evitar mutaciones reactivas en bucle
-    const newLabels = [...chartData.value.labels]
-    const newTempData = [...chartData.value.datasets[0].data]
-    const newHumData = [...chartData.value.datasets[1].data]
+const fetchSensorData = async () => {
+  if (!sensorId.value) return
+  try {
+    const data = await sensorsService.getSensorData(sensorId.value)
+    const results: SensorReading[] = data.results
 
-    newLabels.push(new Date().toLocaleTimeString())
-    newTempData.push(temperatura.value)
-    newHumData.push(humedad.value)
+    // Ordenar los resultados por timestamp de menor a mayor
+    results.sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime())
 
-    // Mantener solo los últimos 10 datos
-    if (newLabels.length > 10) {
-      newLabels.shift()
-      newTempData.shift()
-      newHumData.shift()
+    // Actualizar las variables de temperatura y humedad con los datos más recientes
+    if (results.length > 0) {
+      const latestReading = results[results.length - 1]
+      temperatura.value = latestReading.temperature
+      humedad.value = latestReading.humidity
     }
 
-    // Actualizar chartData de una sola vez
+    // Actualizar el historial de mediciones
+    const newLabels = results.map((entry: SensorReading) =>
+      new Date(entry.timestamp).toLocaleDateString(),
+    )
+    const newTempData = results.map((entry: SensorReading) => entry.temperature)
+    const newHumData = results.map((entry: SensorReading) => entry.humidity)
+
     chartData.value = {
       labels: newLabels,
       datasets: [
@@ -152,10 +174,16 @@ onMounted(() => {
         },
       ],
     }
-  }, 3000)
+  } catch (error) {
+    console.error('Error fetching sensor data:', error)
+  }
+}
+
+onMounted(() => {
+  fetchSensorData()
+  intervalo = window.setInterval(fetchSensorData, 3000)
 })
 
-// Limpiar el intervalo cuando el componente se desmonta
 onUnmounted(() => {
   if (intervalo !== null) {
     clearInterval(intervalo)
