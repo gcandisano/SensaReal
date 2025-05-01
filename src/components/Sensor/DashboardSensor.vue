@@ -214,16 +214,6 @@ watch(microcontroladorSeleccionado, actualizarDatos)
           </div>
         </div>
 
-        <!-- Selector de microcontroladores -->
-        <div class="selector-microcontrolador">
-          <label for="microcontrolador">Seleccionar Microcontrolador:</label>
-          <select id="microcontrolador" v-model="microcontroladorSeleccionado">
-            <option v-for="mcu in microcontroladores" :key="mcu.id" :value="mcu.id">
-              {{ mcu.nombre }}
-            </option>
-          </select>
-        </div>
-
         <div v-if="mostrarModal" class="modal-overlay">
           <div class="modal">
             <h2>Agregar Sensor</h2>
