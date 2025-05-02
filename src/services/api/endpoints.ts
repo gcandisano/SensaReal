@@ -17,5 +17,6 @@ export const API_ROUTES = {
     ADD_THRESHOLD: '/sensor-thresholds',
     GET_SENSOR_DATA: (sensorId: string) => `/sensor-data/sensor/${sensorId}`,
     GET_THRESHOLDS: (sensorId: string) => `/sensor-thresholds/${sensorId}`,
+    GET_ALERTS: (sensorId: string) => `/alerts/${sensorId}/alerts`,
   },
 } as const

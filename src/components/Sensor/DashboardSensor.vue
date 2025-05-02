@@ -12,7 +12,7 @@ import {
   Legend,
 } from 'chart.js'
 import { sensorsService } from '@/services/api/sensors'
-import type { SensorThreshold } from '@/types/sensors'
+import type { SensorThreshold, SensorAlert } from '@/types/sensors'
 import { useRoute } from 'vue-router'
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend)
@@ -80,19 +80,38 @@ const chartOptions = {
 const temperatureRange = ref({ min: 0, max: 0 })
 const humidityRange = ref({ min: 0, max: 0 })
 
+const lastAlert = ref<SensorAlert | null>(null)
+const temperatureThresholds = ref<SensorThreshold[]>([])
+const humidityThresholds = ref<SensorThreshold[]>([])
+
+const getAlertType = computed(() => {
+  if (!lastAlert.value) return null
+  
+  // Buscar en los thresholds de temperatura
+  const tempThreshold = temperatureThresholds.value.find(
+    (t: SensorThreshold) => t.threshold === lastAlert.value?.thresholdValue
+  )
+  
+  // Si coincide con un threshold de temperatura, es una alerta de temperatura
+  if (tempThreshold) return 'temperature'
+  
+  // Si no coincide con temperatura, debe ser humedad
+  return 'humidity'
+})
+
 const fetchSensorThresholds = async () => {
   if (!sensorId.value) return
   try {
     const thresholds = await sensorsService.getSensorThresholds(sensorId.value)
 
-    // Filtrar thresholds por tipo y condición
-    const temperatureThresholds = thresholds.filter((t) => t.type === 'temperature' && t.isActive)
-    const humidityThresholds = thresholds.filter((t) => t.type === 'humidity' && t.isActive)
+    // Filtrar thresholds por tipo
+    temperatureThresholds.value = thresholds.filter((t) => t.type === 'temperature' && t.isActive)
+    humidityThresholds.value = thresholds.filter((t) => t.type === 'humidity' && t.isActive)
 
     // Actualizar rangos de temperatura
-    if (temperatureThresholds.length > 0) {
-      const aboveTemp = temperatureThresholds.find((t) => t.condition === 'above')
-      const belowTemp = temperatureThresholds.find((t) => t.condition === 'below')
+    if (temperatureThresholds.value.length > 0) {
+      const aboveTemp = temperatureThresholds.value.find((t) => t.condition === 'above')
+      const belowTemp = temperatureThresholds.value.find((t) => t.condition === 'below')
       if (aboveTemp && belowTemp) {
         temperatureRange.value = {
           min: belowTemp.threshold,
@@ -102,9 +121,9 @@ const fetchSensorThresholds = async () => {
     }
 
     // Actualizar rangos de humedad
-    if (humidityThresholds.length > 0) {
-      const aboveHum = humidityThresholds.find((t) => t.condition === 'above')
-      const belowHum = humidityThresholds.find((t) => t.condition === 'below')
+    if (humidityThresholds.value.length > 0) {
+      const aboveHum = humidityThresholds.value.find((t) => t.condition === 'above')
+      const belowHum = humidityThresholds.value.find((t) => t.condition === 'below')
       if (aboveHum && belowHum) {
         humidityRange.value = {
           min: belowHum.threshold,
@@ -256,9 +275,22 @@ const fetchSensorData = async () => {
   }
 }
 
+const fetchLastAlert = async () => {
+  if (!sensorId.value) return
+  try {
+    const data = await sensorsService.getSensorAlerts(sensorId.value)
+    if (data.results.length > 0) {
+      lastAlert.value = data.results[0] // La primera alerta es la más reciente
+    }
+  } catch (error) {
+    console.error('Error fetching sensor alerts:', error)
+  }
+}
+
 onMounted(() => {
   fetchSensorData()
   fetchSensorThresholds()
+  fetchLastAlert()
   intervalo = window.setInterval(fetchSensorData, 3000)
 })
 
@@ -343,13 +375,29 @@ function agregarSensor() {
             </div>
           </div>
 
-          <div class="info-card">
-            <h3>Información</h3>
+      
+
+          <div class="info-card" v-if="lastAlert">
+            <h3>Última Alerta</h3>
             <div class="card-content">
-              <p>
-                Las mediciones se actualizan automáticamente cada 5 segundos para garantizar datos
-                precisos en tiempo real.
-              </p>
+              <div class="alert-info">
+                <div class="status-item">
+                  <span class="label">Tipo:</span>
+                  <span class="value">{{ getAlertType === 'temperature' ? 'Temperatura' : 'Humedad' }}</span>
+                </div>
+                <div class="status-item">
+                  <span class="label">Valor registrado:</span>
+                  <span class="value">{{ lastAlert.actualValue }}{{ getAlertType === 'temperature' ? '°C' : '%' }}</span>
+                </div>
+                <div class="status-item">
+                  <span class="label">Valor límite:</span>
+                  <span class="value">{{ lastAlert.thresholdValue }}{{ getAlertType === 'temperature' ? '°C' : '%' }}</span>
+                </div>
+                <div class="status-item">
+                  <span class="label">Fecha:</span>
+                  <span class="value">{{ new Date(lastAlert.sentAt).toLocaleString() }}</span>
+                </div>
+              </div>
             </div>
           </div>
         </div>

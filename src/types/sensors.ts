@@ -26,3 +26,32 @@ export interface SensorThreshold {
     name: string
   }
 }
+
+export interface SensorAlert {
+  id: string
+  userId: string
+  sensorId: string
+  thresholdValue: number
+  actualValue: number
+  condition: string
+  type: 'temperature' | 'humidity'
+  sentAt: string
+  createdAt: string
+  updatedAt: string
+  sensor: {
+    id: string
+    name: string
+  }
+  user: {
+    id: string
+    name: string
+    email: string
+  }
+}
+
+export interface SensorAlertsResponse {
+  count: number
+  next: string | null
+  previous: string | null
+  results: SensorAlert[]
+}
