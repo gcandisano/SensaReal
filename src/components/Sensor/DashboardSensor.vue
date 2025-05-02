@@ -194,6 +194,12 @@ interface SensorReading {
 // Agregar variable para la última medición
 const lastMeasurementTime = ref('')
 
+// Agregar variable para el estado del sistema
+const systemStatus = ref({
+  isConnected: false,
+  message: 'Sin conexión'
+})
+
 const fetchSensorData = async () => {
   if (!sensorId.value) return
   try {
@@ -203,13 +209,22 @@ const fetchSensorData = async () => {
     // Ordenar los resultados por timestamp de menor a mayor
     results.sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime())
 
-    // Actualizar las variables de temperatura y humedad con los datos más recientes
+    // Actualizar las variables con los datos más recientes
     if (results.length > 0) {
       const latestReading = results[results.length - 1]
       temperatura.value = latestReading.temperature
       humedad.value = latestReading.humidity
-      // Actualizar la hora de la última medición
       lastMeasurementTime.value = new Date(latestReading.timestamp).toLocaleTimeString()
+      
+      // Verificar si la última medición fue hace menos de 1 minuto
+      const lastReadingTime = new Date(latestReading.timestamp).getTime()
+      const currentTime = new Date().getTime()
+      const timeDiff = currentTime - lastReadingTime
+      
+      systemStatus.value = {
+        isConnected: timeDiff < 60000, // 60000 ms = 1 minuto
+        message: timeDiff < 60000 ? 'Monitoreando' : 'Sin conexión'
+      }
     }
 
     // Actualizar el historial de mediciones
@@ -234,6 +249,10 @@ const fetchSensorData = async () => {
     }
   } catch (error) {
     console.error('Error fetching sensor data:', error)
+    systemStatus.value = {
+      isConnected: false,
+      message: 'Sin conexión'
+    }
   }
 }
 
@@ -265,28 +284,6 @@ function agregarSensor() {
   cerrarModal()
 }
 
-// Agregar una lista de microcontroladores disponibles
-const microcontroladores = ref([
-  { id: 'mcu1', nombre: 'Microcontrolador 1' },
-  { id: 'mcu2', nombre: 'Microcontrolador 2' },
-  { id: 'mcu3', nombre: 'Microcontrolador 3' },
-])
-
-// Variable para almacenar el microcontrolador seleccionado
-const microcontroladorSeleccionado = ref(microcontroladores.value[0].id)
-
-// Función para actualizar los datos del dashboard según el microcontrolador seleccionado
-function actualizarDatos() {
-  // Aquí deberías hacer la conexión con tu backend real para obtener los datos del microcontrolador seleccionado
-  console.log('Microcontrolador seleccionado:', microcontroladorSeleccionado.value)
-  // Simular actualización de datos
-  temperatura.value = Math.random() * 30 + 10
-  humedad.value = Math.random() * 50 + 30
-}
-
-// Llamar a actualizarDatos cuando se monta el componente y cuando cambia el microcontrolador seleccionado
-onMounted(actualizarDatos)
-watch(microcontroladorSeleccionado, actualizarDatos)
 </script>
 
 <template>
@@ -296,8 +293,8 @@ watch(microcontroladorSeleccionado, actualizarDatos)
         <div class="dashboard-header">
           <h1>Panel de Control</h1>
           <div class="status-indicator">
-            <span class="dot active"></span>
-            Sistema activo
+            <span class="dot" :class="{ active: systemStatus.isConnected }"></span>
+            {{ systemStatus.isConnected ? 'Sistema activo' : 'Sistema inactivo' }}
           </div>
         </div>
 
@@ -317,7 +314,9 @@ watch(microcontroladorSeleccionado, actualizarDatos)
             <div class="card-content">
               <div class="status-item">
                 <span class="label">Estado:</span>
-                <span class="value">Monitoreando</span>
+                <span class="value" :class="{ 'text-red-500': !systemStatus.isConnected, 'text-green-500': systemStatus.isConnected }">
+                  {{ systemStatus.message }}
+                </span>
               </div>
               <div class="status-item">
                 <span class="label">Última actualización:</span>
@@ -444,11 +443,12 @@ watch(microcontroladorSeleccionado, actualizarDatos)
   height: 8px;
   border-radius: 50%;
   background: #666;
+  transition: all 0.3s ease;
 }
 
 .dot.active {
-  background: #4caf50;
-  box-shadow: 0 0 8px rgba(76, 175, 80, 0.5);
+  background: #22c55e;
+  box-shadow: 0 0 8px rgba(34, 197, 94, 0.5);
 }
 
 .info-cards {
@@ -734,5 +734,13 @@ watch(microcontroladorSeleccionado, actualizarDatos)
 
 .modal button:last-child:hover {
   background-color: #e53935;
+}
+
+.text-red-500 {
+  color: #ef4444;
+}
+
+.text-green-500 {
+  color: #22c55e;
 }
 </style>
