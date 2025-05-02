@@ -16,5 +16,6 @@ export const API_ROUTES = {
     UPDATE_NAME: '/esp/sensors/name',
     ADD_THRESHOLD: '/sensor-thresholds',
     GET_SENSOR_DATA: (sensorId: string) => `/sensor-data/sensor/${sensorId}`,
+    GET_THRESHOLDS: (sensorId: string) => `/sensor-thresholds/${sensorId}`,
   },
 } as const

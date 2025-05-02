@@ -1,6 +1,6 @@
 import api from './index'
 import { API_ROUTES } from './endpoints'
-import type { Sensor } from '@/types/sensors'
+import type { Sensor, SensorThreshold } from '@/types/sensors'
 
 export const sensorsService = {
   async getSensors(): Promise<Sensor[]> {
@@ -68,6 +68,16 @@ export const sensorsService = {
       return response.data
     } catch (error) {
       console.error('Error fetching sensor data:', error)
+      throw error
+    }
+  },
+
+  async getSensorThresholds(sensorId: string): Promise<SensorThreshold[]> {
+    try {
+      const response = await api.get<SensorThreshold[]>(API_ROUTES.SENSORS.GET_THRESHOLDS(sensorId))
+      return response.data
+    } catch (error) {
+      console.error('Error fetching sensor thresholds:', error)
       throw error
     }
   },

@@ -12,6 +12,7 @@ import {
   Legend,
 } from 'chart.js'
 import { sensorsService } from '@/services/api/sensors'
+import type { SensorThreshold } from '@/types/sensors'
 import { useRoute } from 'vue-router'
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend)
@@ -76,11 +77,57 @@ const chartOptions = {
   },
 }
 
+const temperatureRange = ref({ min: 0, max: 0 })
+const humidityRange = ref({ min: 0, max: 0 })
+
+const fetchSensorThresholds = async () => {
+  if (!sensorId.value) return
+  try {
+    const thresholds = await sensorsService.getSensorThresholds(sensorId.value)
+
+    // Filtrar thresholds por tipo y condición
+    const temperatureThresholds = thresholds.filter((t) => t.type === 'temperature' && t.isActive)
+    const humidityThresholds = thresholds.filter((t) => t.type === 'humidity' && t.isActive)
+
+    // Actualizar rangos de temperatura
+    if (temperatureThresholds.length > 0) {
+      const aboveTemp = temperatureThresholds.find((t) => t.condition === 'above')
+      const belowTemp = temperatureThresholds.find((t) => t.condition === 'below')
+      if (aboveTemp && belowTemp) {
+        temperatureRange.value = {
+          min: belowTemp.threshold,
+          max: aboveTemp.threshold,
+        }
+      }
+    }
+
+    // Actualizar rangos de humedad
+    if (humidityThresholds.length > 0) {
+      const aboveHum = humidityThresholds.find((t) => t.condition === 'above')
+      const belowHum = humidityThresholds.find((t) => t.condition === 'below')
+      if (aboveHum && belowHum) {
+        humidityRange.value = {
+          min: belowHum.threshold,
+          max: aboveHum.threshold,
+        }
+      }
+    }
+  } catch (error) {
+    console.error('Error fetching sensor thresholds:', error)
+  }
+}
+
 // Propiedades computadas para los estados
 const getTemperaturaEstado = computed(() => {
-  if (temperatura.value >= 18 && temperatura.value <= 28) {
+  if (
+    temperatura.value >= temperatureRange.value.min &&
+    temperatura.value <= temperatureRange.value.max
+  ) {
     return 'optimo'
-  } else if (temperatura.value < 15 || temperatura.value > 30) {
+  } else if (
+    temperatura.value < temperatureRange.value.min - 3 ||
+    temperatura.value > temperatureRange.value.max + 2
+  ) {
     return 'peligro'
   } else {
     return 'alerta'
@@ -88,11 +135,14 @@ const getTemperaturaEstado = computed(() => {
 })
 
 const getTemperaturaMessage = computed(() => {
-  if (temperatura.value >= 18 && temperatura.value <= 28) {
+  if (
+    temperatura.value >= temperatureRange.value.min &&
+    temperatura.value <= temperatureRange.value.max
+  ) {
     return 'Temperatura óptima'
-  } else if (temperatura.value < 15) {
+  } else if (temperatura.value < temperatureRange.value.min) {
     return 'Temperatura demasiado baja'
-  } else if (temperatura.value > 30) {
+  } else if (temperatura.value > temperatureRange.value.max) {
     return 'Temperatura demasiado alta'
   } else {
     return 'Temperatura en rango de alerta'
@@ -100,9 +150,12 @@ const getTemperaturaMessage = computed(() => {
 })
 
 const getHumedadEstado = computed(() => {
-  if (humedad.value >= 30 && humedad.value <= 70) {
+  if (humedad.value >= humidityRange.value.min && humedad.value <= humidityRange.value.max) {
     return 'optimo'
-  } else if (humedad.value < 20 || humedad.value > 80) {
+  } else if (
+    humedad.value < humidityRange.value.min - 10 ||
+    humedad.value > humidityRange.value.max + 10
+  ) {
     return 'peligro'
   } else {
     return 'alerta'
@@ -110,11 +163,11 @@ const getHumedadEstado = computed(() => {
 })
 
 const getHumedadMessage = computed(() => {
-  if (humedad.value >= 30 && humedad.value <= 70) {
+  if (humedad.value >= humidityRange.value.min && humedad.value <= humidityRange.value.max) {
     return 'Humedad óptima'
-  } else if (humedad.value < 20) {
+  } else if (humedad.value < humidityRange.value.min) {
     return 'Humedad demasiado baja'
-  } else if (humedad.value > 80) {
+  } else if (humedad.value > humidityRange.value.max) {
     return 'Humedad demasiado alta'
   } else {
     return 'Humedad en rango de alerta'
@@ -138,6 +191,9 @@ interface SensorReading {
   updatedAt: string
 }
 
+// Agregar variable para la última medición
+const lastMeasurementTime = ref('')
+
 const fetchSensorData = async () => {
   if (!sensorId.value) return
   try {
@@ -152,11 +208,13 @@ const fetchSensorData = async () => {
       const latestReading = results[results.length - 1]
       temperatura.value = latestReading.temperature
       humedad.value = latestReading.humidity
+      // Actualizar la hora de la última medición
+      lastMeasurementTime.value = new Date(latestReading.timestamp).toLocaleTimeString()
     }
 
     // Actualizar el historial de mediciones
     const newLabels = results.map((entry: SensorReading) =>
-      new Date(entry.timestamp).toLocaleDateString(),
+      new Date(entry.timestamp).toLocaleTimeString(),
     )
     const newTempData = results.map((entry: SensorReading) => entry.temperature)
     const newHumData = results.map((entry: SensorReading) => entry.humidity)
@@ -181,6 +239,7 @@ const fetchSensorData = async () => {
 
 onMounted(() => {
   fetchSensorData()
+  fetchSensorThresholds()
   intervalo = window.setInterval(fetchSensorData, 3000)
 })
 
@@ -262,7 +321,7 @@ watch(microcontroladorSeleccionado, actualizarDatos)
               </div>
               <div class="status-item">
                 <span class="label">Última actualización:</span>
-                <span class="value">{{ new Date().toLocaleTimeString() }}</span>
+                <span class="value">{{ lastMeasurementTime }}</span>
               </div>
             </div>
           </div>
@@ -273,12 +332,14 @@ watch(microcontroladorSeleccionado, actualizarDatos)
               <div class="range-item">
                 <i class="fas fa-temperature-high"></i>
                 <span class="label">Temperatura:</span>
-                <span class="value">18°C - 28°C</span>
+                <span class="value"
+                  >{{ temperatureRange.min }}°C - {{ temperatureRange.max }}°C</span
+                >
               </div>
               <div class="range-item">
                 <i class="fas fa-tint"></i>
                 <span class="label">Humedad:</span>
-                <span class="value">30% - 70%</span>
+                <span class="value">{{ humidityRange.min }}% - {{ humidityRange.max }}%</span>
               </div>
             </div>
           </div>
@@ -287,7 +348,7 @@ watch(microcontroladorSeleccionado, actualizarDatos)
             <h3>Información</h3>
             <div class="card-content">
               <p>
-                Las mediciones se actualizan automáticamente cada 3 segundos para garantizar datos
+                Las mediciones se actualizan automáticamente cada 5 segundos para garantizar datos
                 precisos en tiempo real.
               </p>
             </div>
