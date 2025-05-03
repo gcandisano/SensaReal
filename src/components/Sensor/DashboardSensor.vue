@@ -168,6 +168,10 @@ const getTemperaturaMessage = computed(() => {
   }
 })
 
+const cantidadMediciones = computed(() => {
+  return chartData.value.labels.length
+})
+
 const getHumedadEstado = computed(() => {
   if (humedad.value >= humidityRange.value.min && humedad.value <= humidityRange.value.max) {
     return 'optimo'
@@ -426,7 +430,7 @@ function agregarSensor() {
         <div class="grafico-container">
           <div class="grafico-header">
             <h2>Historial de Mediciones</h2>
-            <p class="grafico-descripcion">Últimas 10 mediciones</p>
+            <p class="grafico-descripcion">Últimas {{ cantidadMediciones }} mediciones</p>
           </div>
           <div class="grafico">
             <Line :data="chartData" :options="chartOptions" />
