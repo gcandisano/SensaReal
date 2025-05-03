@@ -1,0 +1,10 @@
+.vscode/
+.git/
+.git
+.gitignore
+.gitattributes
+.prettierrc.json
+tsconfig*.json
+Dockerfile
+docker-compose*.yml
+docker-compose*.yaml
