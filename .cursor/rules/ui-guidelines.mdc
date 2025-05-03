@@ -1,0 +1,41 @@
+---
+description: 
+globs: *.vue
+alwaysApply: false
+---
+# UI Guidelines
+
+## Design System
+- Use Tailwind CSS for styling
+- Implement a consistent color palette
+- Define typography scale
+- Use CSS variables for theme values
+- Maintain consistent spacing
+
+## Component Design
+- Create reusable components
+- Use composition over inheritance
+- Implement proper prop validation
+- Use slots for flexible content
+- Follow atomic design principles
+
+## Responsive Design
+- Use mobile-first approach
+- Implement breakpoints consistently
+- Test on multiple devices
+- Use responsive utilities
+- Consider touch targets
+
+## Accessibility
+- Follow WCAG guidelines
+- Use semantic HTML
+- Implement proper ARIA attributes
+- Ensure keyboard navigation
+- Test with screen readers
+
+## When to Apply
+- When creating new components
+- When styling existing components
+- When implementing responsive features
+- When reviewing UI consistency
+- When updating the design system 

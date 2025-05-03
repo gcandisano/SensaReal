@@ -1,82 +1,51 @@
 <script setup lang="ts">
-import { ref } from 'vue'
-import { useRouter } from 'vue-router'
-import { useAuthStore } from '@/stores/auth'
-import { authService } from '@/services/api/auth'
+import { computed } from 'vue'
+import { useRoute } from 'vue-router'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import { faCloudSunRain } from '@fortawesome/free-solid-svg-icons'
+import LoginForm from '@/components/auth/LoginForm.vue'
+import SignUpForm from '@/components/auth/SignUpForm.vue'
 
-const router = useRouter()
-const authStore = useAuthStore()
-const email = ref('')
-const password = ref('')
-const error = ref('')
-const isLoading = ref(false)
-
-const handleLogin = async () => {
-  try {
-    if (!email.value || !password.value) {
-      error.value = 'Por favor complete todos los campos'
-      return
-    }
-
-    isLoading.value = true
-    const response = await authService.login({
-      email: email.value,
-      password: password.value,
-    })
-
-    // Guardar el token y la información del usuario en el store
-    authStore.setAuth(response)
-
-    // Redirigir al dashboard después del login exitoso
-    router.push('/')
-  } catch (e: any) {
-    error.value = e.response?.data?.message || 'Error al iniciar sesión'
-  } finally {
-    isLoading.value = false
-  }
-}
+const route = useRoute()
+const isLoginRoute = computed(() => route.path === '/login')
 </script>
 
 <template>
-  <div class="auth-container">
-    <div class="auth-box">
-      <h1>Iniciar Sesión</h1>
-
-      <form @submit.prevent="handleLogin" class="auth-form">
-        <div class="form-group">
-          <label for="email">Correo Electrónico</label>
-          <input
-            type="email"
-            id="email"
-            v-model="email"
-            required
-            placeholder="correo@ejemplo.com"
-          />
+  <div class="min-h-screen flex flex-col md:flex-row items-center justify-center gap-24">
+    <div class="flex flex-col items-center justify-center p-8">
+      <div class="text-center text-white transform transition-all duration-500 hover:scale-105">
+        <FontAwesomeIcon
+          :icon="faCloudSunRain"
+          class="text-8xl mb-6 animate-pulse text-[#4a90e2]"
+        />
+        <div class="flex flex-col items-center justify-center p-8 gap-4">
+          <h1 class="text-4xl font-bold mb-4 text-(--color-heading)">Bienvenido a Sensareal!</h1>
+          <p class="text-xl opacity-90 text-(--color-text)">
+            Monitorea en tiempo real la temperatura y<br />
+            humedad con nuestra plataforma.
+          </p>
         </div>
+      </div>
+    </div>
 
-        <div class="form-group">
-          <label for="password">Contraseña</label>
-          <input
-            type="password"
-            id="password"
-            v-model="password"
-            required
-            placeholder="Tu contraseña"
-          />
-        </div>
-
-        <div v-if="error" class="error-message">
-          {{ error }}
-        </div>
-
-        <button type="submit" class="auth-button" :disabled="isLoading">
-          {{ isLoading ? 'Iniciando sesión...' : 'Iniciar Sesión' }}
-        </button>
-
-        <div class="auth-link">
-          ¿No tienes una cuenta? <RouterLink to="/register">Regístrate aquí</RouterLink>
-        </div>
-      </form>
+    <div class="flex items-center justify-center p-8">
+      <component :is="isLoginRoute ? LoginForm : SignUpForm" />
     </div>
   </div>
 </template>
+
+<style>
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.3s ease-in-out;
+}
+</style>

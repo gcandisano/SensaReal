@@ -1,0 +1,42 @@
+---
+description: 
+globs: *.vue
+alwaysApply: false
+---
+# Component Guidelines
+
+## Component Structure
+- Use `script setup` syntax
+- Use `style scoped` syntax
+- Keep components focused and small
+- Use proper component composition
+- Implement proper prop validation
+- Use proper event handling
+
+## Component Communication
+- Use proper props and events
+- Implement proper state management
+- Use proper component lifecycle
+- Implement proper component testing
+- Use proper component documentation
+
+## Component Reusability
+- Create reusable components
+- Use proper component composition
+- Implement proper component testing
+- Use proper component documentation
+- Implement proper component versioning
+
+## Component Performance
+- Use proper component lifecycle
+- Implement proper component caching
+- Use proper component lazy loading
+- Implement proper component testing
+- Use proper component optimization
+
+## When to Apply
+- When creating new components
+- When refactoring existing components
+- When implementing component features
+- When reviewing component code
+- When testing components 

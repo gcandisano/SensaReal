@@ -11,12 +11,22 @@ import {
   Tooltip,
   Legend,
 } from 'chart.js'
+import { sensorsService } from '@/services/api/sensors'
+import type { SensorThreshold, SensorAlert } from '@/types/sensors'
+import { useRoute } from 'vue-router'
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend)
 
+const props = defineProps<{ sensorId: string }>()
+
 const temperatura = ref(0)
 const humedad = ref(0)
-const chartData = ref({
+let intervalo: number | null = null
+
+const chartData = ref<{
+  labels: string[]
+  datasets: { label: string; data: number[]; borderColor: string; tension: number }[]
+}>({
   labels: [],
   datasets: [
     {
@@ -67,11 +77,76 @@ const chartOptions = {
   },
 }
 
+const temperatureRange = ref({ min: 0, max: 0 })
+const humidityRange = ref({ min: 0, max: 0 })
+
+const lastAlert = ref<SensorAlert | null>(null)
+const temperatureThresholds = ref<SensorThreshold[]>([])
+const humidityThresholds = ref<SensorThreshold[]>([])
+
+const getAlertType = computed(() => {
+  if (!lastAlert.value) return null
+  
+  // Buscar en los thresholds de temperatura
+  const tempThreshold = temperatureThresholds.value.find(
+    (t: SensorThreshold) => t.threshold === lastAlert.value?.thresholdValue
+  )
+  
+  // Si coincide con un threshold de temperatura, es una alerta de temperatura
+  if (tempThreshold) return 'temperature'
+  
+  // Si no coincide con temperatura, debe ser humedad
+  return 'humidity'
+})
+
+const fetchSensorThresholds = async () => {
+  if (!sensorId.value) return
+  try {
+    const thresholds = await sensorsService.getSensorThresholds(sensorId.value)
+
+    // Filtrar thresholds por tipo
+    temperatureThresholds.value = thresholds.filter((t) => t.type === 'temperature' && t.isActive)
+    humidityThresholds.value = thresholds.filter((t) => t.type === 'humidity' && t.isActive)
+
+    // Actualizar rangos de temperatura
+    if (temperatureThresholds.value.length > 0) {
+      const aboveTemp = temperatureThresholds.value.find((t) => t.condition === 'above')
+      const belowTemp = temperatureThresholds.value.find((t) => t.condition === 'below')
+      if (aboveTemp && belowTemp) {
+        temperatureRange.value = {
+          min: belowTemp.threshold,
+          max: aboveTemp.threshold,
+        }
+      }
+    }
+
+    // Actualizar rangos de humedad
+    if (humidityThresholds.value.length > 0) {
+      const aboveHum = humidityThresholds.value.find((t) => t.condition === 'above')
+      const belowHum = humidityThresholds.value.find((t) => t.condition === 'below')
+      if (aboveHum && belowHum) {
+        humidityRange.value = {
+          min: belowHum.threshold,
+          max: aboveHum.threshold,
+        }
+      }
+    }
+  } catch (error) {
+    console.error('Error fetching sensor thresholds:', error)
+  }
+}
+
 // Propiedades computadas para los estados
 const getTemperaturaEstado = computed(() => {
-  if (temperatura.value >= 18 && temperatura.value <= 28) {
+  if (
+    temperatura.value >= temperatureRange.value.min &&
+    temperatura.value <= temperatureRange.value.max
+  ) {
     return 'optimo'
-  } else if (temperatura.value < 15 || temperatura.value > 30) {
+  } else if (
+    temperatura.value < temperatureRange.value.min - 3 ||
+    temperatura.value > temperatureRange.value.max + 2
+  ) {
     return 'peligro'
   } else {
     return 'alerta'
@@ -79,21 +154,31 @@ const getTemperaturaEstado = computed(() => {
 })
 
 const getTemperaturaMessage = computed(() => {
-  if (temperatura.value >= 18 && temperatura.value <= 28) {
+  if (
+    temperatura.value >= temperatureRange.value.min &&
+    temperatura.value <= temperatureRange.value.max
+  ) {
     return 'Temperatura óptima'
-  } else if (temperatura.value < 15) {
+  } else if (temperatura.value < temperatureRange.value.min) {
     return 'Temperatura demasiado baja'
-  } else if (temperatura.value > 30) {
+  } else if (temperatura.value > temperatureRange.value.max) {
     return 'Temperatura demasiado alta'
   } else {
     return 'Temperatura en rango de alerta'
   }
 })
 
+const cantidadMediciones = computed(() => {
+  return chartData.value.labels.length
+})
+
 const getHumedadEstado = computed(() => {
-  if (humedad.value >= 30 && humedad.value <= 70) {
+  if (humedad.value >= humidityRange.value.min && humedad.value <= humidityRange.value.max) {
     return 'optimo'
-  } else if (humedad.value < 20 || humedad.value > 80) {
+  } else if (
+    humedad.value < humidityRange.value.min - 10 ||
+    humedad.value > humidityRange.value.max + 10
+  ) {
     return 'peligro'
   } else {
     return 'alerta'
@@ -101,44 +186,77 @@ const getHumedadEstado = computed(() => {
 })
 
 const getHumedadMessage = computed(() => {
-  if (humedad.value >= 30 && humedad.value <= 70) {
+  if (humedad.value >= humidityRange.value.min && humedad.value <= humidityRange.value.max) {
     return 'Humedad óptima'
-  } else if (humedad.value < 20) {
+  } else if (humedad.value < humidityRange.value.min) {
     return 'Humedad demasiado baja'
-  } else if (humedad.value > 80) {
+  } else if (humedad.value > humidityRange.value.max) {
     return 'Humedad demasiado alta'
   } else {
     return 'Humedad en rango de alerta'
   }
 })
 
-// Variable para almacenar la referencia al intervalo
-let intervalo: number | null = null
+const route = useRoute()
+const sensorId = ref(route.params.id as string) // Extrae el sensorId de la ruta
 
-// Simular datos en tiempo real (reemplazar con tu API real)
-onMounted(() => {
-  // Aquí deberías hacer la conexión con tu backend real
-  intervalo = window.setInterval(() => {
-    temperatura.value = Math.random() * 30 + 10
-    humedad.value = Math.random() * 50 + 30
+// Define el tipo para los resultados del sensor
+interface SensorReading {
+  id: string
+  userId: string
+  sensorId: string
+  temperature: number
+  humidity: number
+  timestamp: string
+  batteryLevel: number | null
+  signalStrength: number | null
+  createdAt: string
+  updatedAt: string
+}
 
-    // Crear copias de los arrays para evitar mutaciones reactivas en bucle
-    const newLabels = [...chartData.value.labels]
-    const newTempData = [...chartData.value.datasets[0].data]
-    const newHumData = [...chartData.value.datasets[1].data]
+// Agregar variable para la última medición
+const lastMeasurementTime = ref('')
 
-    newLabels.push(new Date().toLocaleTimeString())
-    newTempData.push(temperatura.value)
-    newHumData.push(humedad.value)
+// Agregar variable para el estado del sistema
+const systemStatus = ref({
+  isConnected: false,
+  message: 'Sin conexión'
+})
 
-    // Mantener solo los últimos 10 datos
-    if (newLabels.length > 10) {
-      newLabels.shift()
-      newTempData.shift()
-      newHumData.shift()
+const fetchSensorData = async () => {
+  if (!sensorId.value) return
+  try {
+    const data = await sensorsService.getSensorData(sensorId.value)
+    const results: SensorReading[] = data.results
+
+    // Ordenar los resultados por timestamp de menor a mayor
+    results.sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime())
+
+    // Actualizar las variables con los datos más recientes
+    if (results.length > 0) {
+      const latestReading = results[results.length - 1]
+      temperatura.value = latestReading.temperature
+      humedad.value = latestReading.humidity
+      lastMeasurementTime.value = new Date(latestReading.timestamp).toLocaleTimeString()
+      
+      // Verificar si la última medición fue hace menos de 1 minuto
+      const lastReadingTime = new Date(latestReading.timestamp).getTime()
+      const currentTime = new Date().getTime()
+      const timeDiff = currentTime - lastReadingTime
+      
+      systemStatus.value = {
+        isConnected: timeDiff < 60000, // 60000 ms = 1 minuto
+        message: timeDiff < 60000 ? 'Monitoreando' : 'Sin conexión'
+      }
     }
 
-    // Actualizar chartData de una sola vez
+    // Actualizar el historial de mediciones
+    const newLabels = results.map((entry: SensorReading) =>
+      new Date(entry.timestamp).toLocaleTimeString(),
+    )
+    const newTempData = results.map((entry: SensorReading) => entry.temperature)
+    const newHumData = results.map((entry: SensorReading) => entry.humidity)
+
     chartData.value = {
       labels: newLabels,
       datasets: [
@@ -152,10 +270,34 @@ onMounted(() => {
         },
       ],
     }
-  }, 3000)
+  } catch (error) {
+    console.error('Error fetching sensor data:', error)
+    systemStatus.value = {
+      isConnected: false,
+      message: 'Sin conexión'
+    }
+  }
+}
+
+const fetchLastAlert = async () => {
+  if (!sensorId.value) return
+  try {
+    const data = await sensorsService.getSensorAlerts(sensorId.value)
+    if (data.results.length > 0) {
+      lastAlert.value = data.results[0] // La primera alerta es la más reciente
+    }
+  } catch (error) {
+    console.error('Error fetching sensor alerts:', error)
+  }
+}
+
+onMounted(() => {
+  fetchSensorData()
+  fetchSensorThresholds()
+  fetchLastAlert()
+  intervalo = window.setInterval(fetchSensorData, 3000)
 })
 
-// Limpiar el intervalo cuando el componente se desmonta
 onUnmounted(() => {
   if (intervalo !== null) {
     clearInterval(intervalo)
@@ -178,28 +320,6 @@ function agregarSensor() {
   cerrarModal()
 }
 
-// Agregar una lista de microcontroladores disponibles
-const microcontroladores = ref([
-  { id: 'mcu1', nombre: 'Microcontrolador 1' },
-  { id: 'mcu2', nombre: 'Microcontrolador 2' },
-  { id: 'mcu3', nombre: 'Microcontrolador 3' },
-])
-
-// Variable para almacenar el microcontrolador seleccionado
-const microcontroladorSeleccionado = ref(microcontroladores.value[0].id)
-
-// Función para actualizar los datos del dashboard según el microcontrolador seleccionado
-function actualizarDatos() {
-  // Aquí deberías hacer la conexión con tu backend real para obtener los datos del microcontrolador seleccionado
-  console.log('Microcontrolador seleccionado:', microcontroladorSeleccionado.value)
-  // Simular actualización de datos
-  temperatura.value = Math.random() * 30 + 10
-  humedad.value = Math.random() * 50 + 30
-}
-
-// Llamar a actualizarDatos cuando se monta el componente y cuando cambia el microcontrolador seleccionado
-onMounted(actualizarDatos)
-watch(microcontroladorSeleccionado, actualizarDatos)
 </script>
 
 <template>
@@ -209,19 +329,9 @@ watch(microcontroladorSeleccionado, actualizarDatos)
         <div class="dashboard-header">
           <h1>Panel de Control</h1>
           <div class="status-indicator">
-            <span class="dot active"></span>
-            Sistema activo
+            <span class="dot" :class="{ active: systemStatus.isConnected }"></span>
+            {{ systemStatus.isConnected ? 'Sistema activo' : 'Sistema inactivo' }}
           </div>
-        </div>
-
-        <!-- Selector de microcontroladores -->
-        <div class="selector-microcontrolador">
-          <label for="microcontrolador">Seleccionar Microcontrolador:</label>
-          <select id="microcontrolador" v-model="microcontroladorSeleccionado">
-            <option v-for="mcu in microcontroladores" :key="mcu.id" :value="mcu.id">
-              {{ mcu.nombre }}
-            </option>
-          </select>
         </div>
 
         <div v-if="mostrarModal" class="modal-overlay">
@@ -240,11 +350,13 @@ watch(microcontroladorSeleccionado, actualizarDatos)
             <div class="card-content">
               <div class="status-item">
                 <span class="label">Estado:</span>
-                <span class="value">Monitoreando</span>
+                <span class="value" :class="{ 'text-red-500': !systemStatus.isConnected, 'text-green-500': systemStatus.isConnected }">
+                  {{ systemStatus.message }}
+                </span>
               </div>
               <div class="status-item">
                 <span class="label">Última actualización:</span>
-                <span class="value">{{ new Date().toLocaleTimeString() }}</span>
+                <span class="value">{{ lastMeasurementTime }}</span>
               </div>
             </div>
           </div>
@@ -255,23 +367,41 @@ watch(microcontroladorSeleccionado, actualizarDatos)
               <div class="range-item">
                 <i class="fas fa-temperature-high"></i>
                 <span class="label">Temperatura:</span>
-                <span class="value">18°C - 28°C</span>
+                <span class="value"
+                  >{{ temperatureRange.min }}°C - {{ temperatureRange.max }}°C</span
+                >
               </div>
               <div class="range-item">
                 <i class="fas fa-tint"></i>
                 <span class="label">Humedad:</span>
-                <span class="value">30% - 70%</span>
+                <span class="value">{{ humidityRange.min }}% - {{ humidityRange.max }}%</span>
               </div>
             </div>
           </div>
 
-          <div class="info-card">
-            <h3>Información</h3>
+      
+
+          <div class="info-card" v-if="lastAlert">
+            <h3>Última Alerta</h3>
             <div class="card-content">
-              <p>
-                Las mediciones se actualizan automáticamente cada 3 segundos para garantizar datos
-                precisos en tiempo real.
-              </p>
+              <div class="alert-info">
+                <div class="status-item">
+                  <span class="label">Tipo:</span>
+                  <span class="value">{{ getAlertType === 'temperature' ? 'Temperatura' : 'Humedad' }}</span>
+                </div>
+                <div class="status-item">
+                  <span class="label">Valor registrado:</span>
+                  <span class="value">{{ lastAlert.actualValue }}{{ getAlertType === 'temperature' ? '°C' : '%' }}</span>
+                </div>
+                <div class="status-item">
+                  <span class="label">Valor límite:</span>
+                  <span class="value">{{ lastAlert.thresholdValue }}{{ getAlertType === 'temperature' ? '°C' : '%' }}</span>
+                </div>
+                <div class="status-item">
+                  <span class="label">Fecha:</span>
+                  <span class="value">{{ new Date(lastAlert.sentAt).toLocaleString() }}</span>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -300,7 +430,7 @@ watch(microcontroladorSeleccionado, actualizarDatos)
         <div class="grafico-container">
           <div class="grafico-header">
             <h2>Historial de Mediciones</h2>
-            <p class="grafico-descripcion">Últimas 10 mediciones</p>
+            <p class="grafico-descripcion">Últimas {{ cantidadMediciones }} mediciones</p>
           </div>
           <div class="grafico">
             <Line :data="chartData" :options="chartOptions" />
@@ -365,11 +495,12 @@ watch(microcontroladorSeleccionado, actualizarDatos)
   height: 8px;
   border-radius: 50%;
   background: #666;
+  transition: all 0.3s ease;
 }
 
 .dot.active {
-  background: #4caf50;
-  box-shadow: 0 0 8px rgba(76, 175, 80, 0.5);
+  background: #22c55e;
+  box-shadow: 0 0 8px rgba(34, 197, 94, 0.5);
 }
 
 .info-cards {
@@ -655,5 +786,13 @@ watch(microcontroladorSeleccionado, actualizarDatos)
 
 .modal button:last-child:hover {
   background-color: #e53935;
+}
+
+.text-red-500 {
+  color: #ef4444;
+}
+
+.text-green-500 {
+  color: #22c55e;
 }
 </style>

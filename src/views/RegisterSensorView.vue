@@ -7,12 +7,21 @@ import {
   faTint,
   faMapMarkerAlt,
   faEnvelope,
+  faRedo,
 } from '@fortawesome/free-solid-svg-icons'
+import { sensorsService } from '@/services/api/sensors'
+
+const generateUUID = () => {
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+    const r = (Math.random() * 16) | 0
+    const v = c === 'x' ? r : (r & 0x3) | 0x8
+    return v.toString(16)
+  })
+}
 
 const router = useRouter()
 const nombre = ref('')
-const ubicacion = ref('')
-const descripcion = ref('')
+const uuid = ref(generateUUID())
 const tempMin = ref('')
 const tempMax = ref('')
 const humMin = ref('')
@@ -24,12 +33,11 @@ const handleRegisterSensor = async () => {
   try {
     if (
       !nombre.value ||
-      !ubicacion.value ||
+      !uuid.value ||
       !tempMin.value ||
       !tempMax.value ||
       !humMin.value ||
-      !humMax.value ||
-      !email.value
+      !humMax.value
     ) {
       error.value = 'Por favor complete los campos requeridos'
       return
@@ -45,24 +53,27 @@ const handleRegisterSensor = async () => {
       return
     }
 
-    console.log('Sensor registrado:', {
-      nombre: nombre.value,
-      ubicacion: ubicacion.value,
-      descripcion: descripcion.value,
-      tipo: 'DHT22',
-      limites: {
-        temperatura: {
-          min: Number(tempMin.value),
-          max: Number(tempMax.value),
-        },
-        humedad: {
-          min: Number(humMin.value),
-          max: Number(humMax.value),
-        },
-      },
-      emailNotificacion: email.value,
-    })
+    // Llamada al servicio de sensores
+    await sensorsService.createSensor(uuid.value, nombre.value)
 
+    // Llamadas al servicio de umbrales
+    const thresholds = [
+      { threshold: Number(tempMin.value), condition: 'below', type: 'temperature' },
+      { threshold: Number(tempMax.value), condition: 'above', type: 'temperature' },
+      { threshold: Number(humMin.value), condition: 'below', type: 'humidity' },
+      { threshold: Number(humMax.value), condition: 'above', type: 'humidity' },
+    ]
+
+    for (const threshold of thresholds) {
+      await sensorsService.addThreshold(
+        uuid.value,
+        threshold.threshold,
+        threshold.condition,
+        threshold.type,
+      )
+    }
+
+    console.log('Sensor y umbrales registrados con éxito')
     router.push('/')
   } catch (e) {
     error.value = 'Error al registrar el sensor'
@@ -96,17 +107,21 @@ const handleRegisterSensor = async () => {
           </div>
 
           <div class="form-group">
-            <label for="ubicacion">
+            <label for="uuid">
               <font-awesome-icon :icon="faMapMarkerAlt" class="icon" />
-              Ubicación*
+              UUID*
             </label>
-            <input
-              type="text"
-              id="ubicacion"
-              v-model="ubicacion"
-              required
-              placeholder="Ej: Invernadero Principal"
-            />
+            <div class="uuid-input-container">
+              <input type="text" id="uuid" v-model="uuid" readonly required />
+              <button
+                type="button"
+                class="reset-uuid-button"
+                @click="uuid = generateUUID()"
+                title="Generar nuevo UUID"
+              >
+                <font-awesome-icon :icon="faRedo" />
+              </button>
+            </div>
           </div>
         </div>
 
@@ -386,6 +401,36 @@ textarea {
   right: 0.75rem;
   color: var(--color-text);
   opacity: 0.7;
+}
+
+.uuid-input-container {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.uuid-input-container input {
+  flex: 1;
+  padding: 0.75rem;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  background: var(--color-background);
+  color: var(--color-text);
+  font-family: monospace;
+}
+
+.reset-uuid-button {
+  background-color: var(--color-primary);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 0.75rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.reset-uuid-button:hover {
+  background-color: var(--color-primary-hover);
 }
 
 @media (max-width: 768px) {
