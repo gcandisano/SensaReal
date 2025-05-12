@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import DashboardSensor from '../components/Sensor/DashboardSensor.vue'
+import SensorDashboard from '../components/Sensor/SensorDashboard.vue'
 </script>
 
 <template>
   <main>
-    <DashboardSensor />
+    <SensorDashboard />
   </main>
 </template>

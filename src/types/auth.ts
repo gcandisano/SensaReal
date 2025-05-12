@@ -16,6 +16,15 @@ export interface RegisterCredentials extends LoginCredentials {
 }
 
 export interface AuthResponse {
-  token: string
+  token?: string
   user: User
+  needsVerification?: boolean
+}
+
+export interface VerifyEmailResponse {
+  message: string
+}
+
+export interface SendEmailVerificationResponse {
+  message: string
 }

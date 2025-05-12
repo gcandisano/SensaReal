@@ -51,7 +51,7 @@ const handleSignUp = async () => {
     })
 
     // Redirect to email verification page
-    router.push('/verify-email')
+    router.push('/send-email-verification')
   } catch (e: any) {
     console.log(e)
     const status = e.response?.status

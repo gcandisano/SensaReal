@@ -13,7 +13,6 @@ const props = defineProps<Props>()
 const router = useRouter()
 
 const navigateToSensor = () => {
-  console.log('propiedades', props.sensor)
   router.push(`/sensors/${props.sensor.id}`)
 }
 </script>
@@ -29,18 +28,6 @@ const navigateToSensor = () => {
           <h3 class="text-xl font-semibold text-[#4a90e2]">
             {{ sensor?.name || 'Sensor sin nombre' }}
           </h3>
-        </div>
-        <div class="flex items-center gap-2 mt-2">
-          <span
-            :class="[
-              'px-2 py-1 rounded-full text-sm font-medium',
-              sensor?.status === 'ASSIGNED'
-                ? 'bg-green-900/50 text-green-400 border border-green-500/30'
-                : 'bg-red-900/50 text-red-400 border border-red-500/30',
-            ]"
-          >
-            {{ sensor?.status === 'ASSIGNED' ? 'Asignado' : 'No asignado' }}
-          </span>
         </div>
       </div>
     </div>
