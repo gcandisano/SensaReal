@@ -21,10 +21,13 @@ export default defineConfig({
   },
   server: {
     allowedHosts: [
+      'nattech.fib.upc.edu',
       'localhost',
       '127.0.0.1',
       '::1',
-      'nattech.fib.upc.edu',
+      'frontend', // used by nginx proxy_pass
     ],
+    host: '0.0.0.0',
+    hmr: false,
   }
 })
