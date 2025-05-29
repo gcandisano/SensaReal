@@ -15,7 +15,7 @@ export const sensorsService = {
 
   async createSensor(id: string, name: string): Promise<any> {
     try {
-      const response = await api.post(API_ROUTES.SENSORS.GET, { id, name })
+      const response = await api.post(API_ROUTES.SENSORS.CREATE, { id, name })
       return response.data
     } catch (error) {
       console.error('Error creating sensor:', error)
@@ -90,5 +90,5 @@ export const sensorsService = {
       console.error('Error fetching sensor alerts:', error)
       throw error
     }
-  }
+  },
 }

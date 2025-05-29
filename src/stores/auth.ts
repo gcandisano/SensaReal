@@ -8,10 +8,10 @@ export const useAuthStore = defineStore('auth', () => {
   const isAuthenticated = ref(!!token.value)
 
   const setAuth = ({ token: authToken, user: userData }: AuthResponse) => {
-    token.value = authToken
+    token.value = authToken ?? null
     user.value = userData
-    isAuthenticated.value = true
-    localStorage.setItem('token', authToken)
+    isAuthenticated.value = !!authToken
+    localStorage.setItem('token', authToken ?? '')
   }
 
   const clearAuth = () => {
@@ -21,11 +21,21 @@ export const useAuthStore = defineStore('auth', () => {
     localStorage.removeItem('token')
   }
 
+  const setUser = (userData: User) => {
+    user.value = userData
+  }
+
+  const clearUser = () => {
+    user.value = null
+  }
+
   return {
     user,
     token,
     isAuthenticated,
     setAuth,
     clearAuth,
+    setUser,
+    clearUser,
   }
 })

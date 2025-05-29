@@ -18,13 +18,9 @@ const loading = ref(true)
 const error = ref<string | null>(null)
 const router = useRouter()
 
-const filterOptions = ['Todos', 'Asignado', 'No asignado'] as const
-type FilterOption = (typeof filterOptions)[number]
-
 const searchQuery = ref('')
 const sortField = ref<'name' | 'temperature' | 'humidity'>('name')
 const sortDirection = ref<'asc' | 'desc'>('asc')
-const activeFilter = ref<FilterOption>('Todos')
 
 const filteredAndSortedSensors = computed(() => {
   if (!sensors.value) return []
@@ -35,15 +31,6 @@ const filteredAndSortedSensors = computed(() => {
   if (searchQuery.value) {
     const query = searchQuery.value.toLowerCase()
     result = result.filter((sensor) => sensor?.name?.toLowerCase().includes(query))
-  }
-
-  // Apply active status filter
-  if (activeFilter.value !== 'Todos') {
-    result = result.filter((sensor) =>
-      activeFilter.value === 'Asignado'
-        ? sensor?.status === 'ASSIGNED'
-        : sensor?.status === 'UNASSIGNED',
-    )
   }
 
   // Apply sorting
@@ -84,9 +71,9 @@ const fetchSensors = async () => {
     const mappedSensors = response.map((sensor) => ({
       ...sensor,
       lastReading: {
-        temperature: sensor.readings?.temperature || 0,
-        humidity: sensor.readings?.humidity || 0,
-        timestamp: sensor.readings?.timestamp || '',
+        temperature: sensor.lastReading?.temperature || 0,
+        humidity: sensor.lastReading?.humidity || 0,
+        timestamp: sensor.lastReading?.timestamp || '',
       },
     }))
     sensors.value = mappedSensors
@@ -108,7 +95,7 @@ const handleDeleteSensor = async (id: string) => {
 }
 
 const handleUpdateSensor = async (sensor: Sensor) => {
-  sensors.value = sensors.value.map((s) => (s.sensorId === sensor.sensorId ? sensor : s))
+  sensors.value = sensors.value.map((s) => (s.id === sensor.id ? sensor : s))
 }
 
 onMounted(() => {
@@ -145,15 +132,15 @@ onMounted(() => {
         <p class="text-3xl font-normal text-white">No hay sensores añadidos aún</p>
         <button
           class="px-6 py-2 bg-[#4C8FE9] text-white rounded-lg hover:bg-[#4080D5] transition-colors duration-300 cursor-pointer"
-          @click="addDevice"
+          @click="router.push('/register-sensor')"
         >
           Añadir Sensor
         </button>
       </div>
     </div>
 
-    <!-- Search and Filters -->
-    <div class="flex flex-col md:flex-row gap-4">
+    <!-- Search -->
+    <div v-if="filteredAndSortedSensors.length > 0" class="flex flex-col md:flex-row gap-4">
       <div class="flex-1">
         <div class="relative">
           <input
@@ -168,25 +155,10 @@ onMounted(() => {
           />
         </div>
       </div>
-      <div class="flex gap-2">
-        <button
-          v-for="filter in filterOptions"
-          :key="filter"
-          @click="activeFilter = filter"
-          :class="[
-            'px-4 py-2 rounded-lg transition-colors duration-300',
-            activeFilter === filter
-              ? 'bg-[#4a90e2] text-white'
-              : 'bg-gray-100 text-gray-700 hover:bg-gray-200',
-          ]"
-        >
-          {{ filter.charAt(0).toUpperCase() + filter.slice(1) }}
-        </button>
-      </div>
     </div>
 
     <!-- Sort Headers -->
-    <div class="flex gap-4 text-sm text-gray-300">
+    <div v-if="filteredAndSortedSensors.length > 0" class="flex gap-4 text-sm text-gray-300">
       <button
         @click="toggleSort('name')"
         class="flex items-center gap-1 hover:text-[#4a90e2] transition-colors duration-300"

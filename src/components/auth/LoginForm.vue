@@ -27,6 +27,12 @@ const handleLogin = async () => {
       password: password.value,
     })
 
+    if (response.needsVerification) {
+      authStore.setUser(response.user)
+      router.push('/send-email-verification')
+      return
+    }
+
     authStore.setAuth(response)
     router.push('/')
   } catch (e: any) {
